@@ -123,7 +123,7 @@ with st.form("candidate_form", clear_on_submit=False):
 
 # --- 3. ALGORITHM EXECUTION & DASHBOARD ---
 if submitted:
-    st.toast("Merit calculation complete!", icon="✅")
+    st.toast("Elgibility Calculation Completed!", icon="✅")
     st.divider()
 
     backend_category = category.split(" ")[0]

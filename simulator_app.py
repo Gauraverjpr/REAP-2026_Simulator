@@ -210,7 +210,7 @@ if submitted:
             effective_score += sports_weight
             sports_bonus_applied = True
 
-        display_priority = "Priority 1 (Sports Category A)" if is_category_a else academic_priority
+        display_priority = "Priority 1 (Sports A)" if is_category_a else academic_priority
 
         # --- DASHBOARD LAYOUT WITH SPEEDOMETER ---
         dash_col1, dash_col2 = st.columns([1.5, 1])

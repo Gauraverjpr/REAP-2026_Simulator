@@ -261,7 +261,7 @@ if submitted:
                 # Apply mmerit and Horizontal Reservations ONLY if Domicile is Rajasthan
                 if domicile == "Rajasthan":
                     ranks.append("🔹 `mmerit` (Overall State Merit)")
-                    if gender == "F": ranks.append("🔹 `mgenf` (Overall General Female - 30% Horizontal)")
+                    if gender == "F": ranks.append("🔹 `mgenf` (Overall General Female)")
 
                     if backend_category in ["OBC", "SC", "ST", "MBC", "EWS"]:
                         ranks.append(f"🔹 `m{backend_category.lower()}` (Category {backend_category})")

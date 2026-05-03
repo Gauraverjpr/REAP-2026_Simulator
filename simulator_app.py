@@ -90,7 +90,7 @@ with st.form("candidate_form", clear_on_submit=False):
             area = st.selectbox("Area Type", ["Non-TSP", "TSP"],
                                 help="Tribal Sub Plan (TSP) area. 45% of the ST quota is horizontally reserved for TSP candidates. Only applicable if Category is ST.")
             domicile = st.selectbox("Domicile", ["Rajasthan", "Outside Rajasthan"],
-                                    help="Non-Rajasthan candidates are strictly processed as UR/GEN with NO horizontal reservations.")
+                                    help="Non-Rajasthan candidates are strictly processed as UR/GEN with NO horizontal reservations and are only eligible for Self Financed Seats (SFS).")
 
     with st.expander("⭐ Step 3: Supernumerary and Other Quotas", expanded=False):
         c5, c6 = st.columns(2)
@@ -229,9 +229,9 @@ if submitted:
             if km_override_applied:
                 st.warning(
                     "⚠️ **Kashmiri Migrant Rule Applied:** For main state matrix processing, Domicile is forced to 'Outside Rajasthan' and Category forced to 'GEN'.")
-            elif res_override_applied or (domicile != "Rajasthan" and gender == "F"):
+            elif domicile != "Rajasthan":
                 st.warning(
-                    "⚠️ **Out-of-State Rule Applied:** Candidate is not a domicile of Rajasthan. Vertical categories are forced to UR/GEN and all horizontal reservations (Female, PwD, EXS, TSP, Sports) have been nullified.")
+                    "⚠️ **Out-of-State Rule Applied:** Candidate is not a domicile of Rajasthan. Vertical/horizontal reservations are nullified, and the candidate is **excluded from the main State Merit (`mmerit`)**. The candidate is eligible **ONLY for Self Financed Seats (SFS)** under the Outside Rajasthan Quota.")
 
             st.markdown("### 🏆 Projected Ranking Lists")
 
@@ -252,10 +252,11 @@ if submitted:
 
             else:
                 # MAIN STATE MATRIX (If not WP or FN)
-                ranks = ["🔹 `mmerit` (Overall State Merit)"]
+                ranks = []
 
-                # Apply Horizontal Reservations ONLY if Domicile is Rajasthan
+                # Apply mmerit and Horizontal Reservations ONLY if Domicile is Rajasthan
                 if domicile == "Rajasthan":
+                    ranks.append("🔹 `mmerit` (Overall State Merit)")
                     if gender == "F": ranks.append("🔹 `mgenf` (Overall General Female - 30% Horizontal)")
 
                     if backend_category in ["OBC", "SC", "ST", "MBC", "EWS"]:
@@ -283,8 +284,8 @@ if submitted:
                         else:
                             ranks.append(f"🔹 `msqa` (Sports Priority Sort - Category {cat_letter})")
                 else:
-                    # Outside Rajasthan gets pure MOR list
-                    ranks.append("🔹 `mor` (Outside Rajasthan Quota - 15%)")
+                    # Outside Rajasthan gets pure MOR list exclusively
+                    ranks.append("🔹 `mor` (Outside Rajasthan Quota - 15%) - **Eligible for Self Financed Seats (SFS) ONLY**")
 
                 # Supernumerary quotas apply independently of native matrices
                 if km_quota:

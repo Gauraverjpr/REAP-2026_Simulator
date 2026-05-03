@@ -227,7 +227,7 @@ if submitted:
 
             if is_category_a:
                 st.info(
-                    f"**Note:** Priority 1 is capped at 5% of total course seats. If candidate does not secure a Priority 1 seat, they will fall back to **{academic_priority}** with an Effective Score of {effective_score:.2f} (Adding +7.0).")
+                    f"**Note:** Priority 1 is capped at 5% of total course seats. If candidate does not secure a Priority 1 seat, he/she will fall back to **{academic_priority}** with an Effective Score of {effective_score:.2f} (Adding +7.0).")
 
             if km_override_applied:
                 st.warning(

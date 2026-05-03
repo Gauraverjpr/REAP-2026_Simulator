@@ -219,8 +219,10 @@ if submitted:
             mc1, mc2 = st.columns(2)
             mc1.metric(label="Calculated Priority Tier", value=display_priority,
                        delta="Highest Eligible" if jee_basis else None)
+            
+            # Suppress delta warning for WP and FN exclusive pools to avoid confusion
             mc2.metric(label="Final Matrix Category", value=backend_category,
-                       delta="Out-of-State Override" if dom_override_applied else None, delta_color="off")
+                       delta="Out-of-State Override" if (dom_override_applied and not wp_quota and not fn_quota) else None, delta_color="off")
 
             if is_category_a:
                 st.info(
@@ -229,7 +231,8 @@ if submitted:
             if km_override_applied:
                 st.warning(
                     "⚠️ **Kashmiri Migrant Rule Applied:** For main state matrix processing, Domicile is forced to 'Outside Rajasthan' and Category forced to 'GEN'.")
-            elif domicile != "Rajasthan":
+            elif domicile != "Rajasthan" and not wp_quota and not fn_quota:
+                # Warning suppressed for WP and FN candidates
                 st.warning(
                     "⚠️ **Out-of-State Rule Applied:** Candidate is not a domicile of Rajasthan. Vertical/horizontal reservations are nullified, and the candidate is **excluded from the main State Merit (`mmerit`)**. The candidate is eligible **ONLY for Self Financed Seats (SFS)** under the Outside Rajasthan Quota.")
 

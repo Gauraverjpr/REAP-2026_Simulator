@@ -219,14 +219,15 @@ if submitted:
             mc1, mc2 = st.columns(2)
             mc1.metric(label="Calculated Priority Tier", value=display_priority,
                        delta="Highest Eligible" if jee_basis else None)
-            
+
             # Suppress delta warning for WP and FN exclusive pools to avoid confusion
             mc2.metric(label="Final Matrix Category", value=backend_category,
-                       delta="Out-of-State Override" if (dom_override_applied and not wp_quota and not fn_quota) else None, delta_color="off")
+                       delta="Out-of-State Override" if (
+                                   dom_override_applied and not wp_quota and not fn_quota) else None, delta_color="off")
 
             if is_category_a:
                 st.info(
-                    f"**Note:** Priority 1 is capped at 5% of total course seats. If candidate does not secure a Priority 1 seat, they will fall back to **{academic_priority}** (Category B) with an Effective Score of {effective_score:.2f}.")
+                    f"**Note:** Priority 1 is capped at 5% of total course seats. If candidate does not secure a Priority 1 seat, they will fall back to **{academic_priority}** with an Effective Score of {effective_score:.2f} (Adding +7.0).")
 
             if km_override_applied:
                 st.warning(
@@ -288,7 +289,8 @@ if submitted:
                             ranks.append(f"🔹 `msqa` (Sports Priority Sort - Category {cat_letter})")
                 else:
                     # Outside Rajasthan gets pure MOR list exclusively
-                    ranks.append("🔹 `mor` (Outside Rajasthan Quota - 15%) - **Eligible for Self Financed Seats (SFS) ONLY**")
+                    ranks.append(
+                        "🔹 `mor` (Outside Rajasthan Quota - 15%) - **Eligible for Self Financed Seats (SFS) ONLY**")
 
                 # Supernumerary quotas apply independently of native matrices
                 if km_quota:

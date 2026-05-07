@@ -76,7 +76,6 @@ with st.expander("🎓 Step 1: Academic Information", expanded=True):
     st.markdown("---")
     qual_exam = st.selectbox("Select Qualifying Basis", ["-- Select --", "12th Board", "Diploma", "D.Voc"])
     
-    # Strictly separated memory variables
     perc_12th = 0.0
     perc_diploma = 0.0
     perc_dvoc = 0.0
@@ -178,7 +177,7 @@ if submitted:
     
     if qual_exam == "12th Board":
         if sub1 == "Agriculture Stream":
-            eligible_groups.extend(["Group-4", "Group-5"])
+            eligible_groups.append("Group-5 Branches")
         else:
             if len(selected_subs) < 3:
                 st.error("❌ **Action Required:** Please select exactly three subjects from the 12th Board dropdowns in Step 1.")
@@ -187,18 +186,18 @@ if submitted:
             subs_set = set(selected_subs)
             # AICTE Group Matching Logic
             if {"Physics", "Chemistry", "Mathematics"}.issubset(subs_set):
-                eligible_groups.append("Group-1")
+                eligible_groups.append("Group-1 (All Branches)")
             else:
                 if {"Physics", "Mathematics"}.issubset(subs_set):
-                    eligible_groups.append("Group-2")
+                    eligible_groups.append("Group-2 Branches")
                 if {"Physics", "Chemistry"}.issubset(subs_set):
-                    eligible_groups.append("Group-4")
+                    eligible_groups.append("Group-4 Branches")
                 if "Mathematics" in subs_set and not {"Physics", "Mathematics"}.issubset(subs_set):
-                    eligible_groups.append("Group-6")
+                    eligible_groups.append("Group-6 Branches")
                 if "Chemistry" in subs_set and not {"Physics", "Chemistry"}.issubset(subs_set):
-                    eligible_groups.append("Group-3")
+                    eligible_groups.append("Group-3 Branches")
                 if "Agriculture" in subs_set:
-                    eligible_groups.append("Group-5")
+                    eligible_groups.append("Group-5 Branches")
                     
         if eligible_groups:
             st.success(f"✅ Based on your 12th Board subjects, you are eligible for: **{', '.join(eligible_groups)}**")
@@ -220,7 +219,7 @@ if submitted:
                         pdf_b64 = base64.b64encode(pdf_file.read()).decode()
                         button_html = f'''
                         <a href="data:application/pdf;base64,{pdf_b64}" download="Group_Branches.pdf" style="display: inline-block; padding: 0.5rem 1rem; color: #FFFFFF; background-color: #112240; border: 1px solid #D4AF37; border-radius: 6px; text-decoration: none; font-weight: 600; text-align: center; margin-top: 10px;">
-                            📥 Download Official Group_Branches.pdf
+                            📥 Download to know in detail
                         </a>
                         '''
                         st.markdown(button_html, unsafe_allow_html=True)
@@ -229,7 +228,7 @@ if submitted:
             st.stop()
 
     elif qual_exam == "Diploma":
-        st.success("✅ **Note:** As a Diploma holder, you are considered equivalent to PCM. You are eligible for **Group-1** and evaluated under **Priority 3**.")
+        st.success("✅ **Note:** As a Diploma holder, you are considered equivalent to PCM. You are eligible for **Group-1 (All Branches)** and evaluated under **Priority 3**.")
         
     elif qual_exam == "D.Voc":
         st.info("📌 **Note:** You are eligible for the relevant branch in which you have passed the D.Voc. Evaluated under **Priority 4**.")

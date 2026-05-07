@@ -66,18 +66,92 @@ with st.form("candidate_form", clear_on_submit=False):
         c1, c2 = st.columns(2)
         with c1:
             name = st.text_input("Candidate Name", "")
-            perc_12th = st.number_input("12th Board (%)", min_value=0.0, max_value=100.0, value=75.0, step=0.1,
-                                        help="Percentage obtained in class 12th. Eligibility cutoff is 45% for GEN and 40% for Reserved categories.")
             jee_score = st.number_input("JEE Percentile (0 if none)", min_value=0.0, max_value=100.0, value=25.0,
-                                        step=0.1,
-                                        help="Rank obtained in JEE (Mains) 2026. Evaluated as Priority 2. Requires a minimum of 20 percentile.")
+                                        step=0.1, help="Rank obtained in JEE (Mains) 2026. Evaluated as Priority 2. Requires a minimum of 20 percentile.")
         with c2:
             dob = st.date_input("Date of Birth", datetime(2005, 1, 1),
                                 help="Used as the final tie-breaker. Older candidates rank higher.")
-            perc_dip = st.number_input("D.Voc / Diploma (%)", min_value=0.0, max_value=100.0, value=0.0, step=0.1,
-                                       help="Percentage obtained in D.Voc (NCrF level 4) or approved Diploma. Evaluated as Priority 4.")
             perc_10th = st.number_input("10th Board (%)", min_value=0.0, max_value=100.0, value=80.0, step=0.1,
-                                        help="Used internally as a secondary tie-breaker if Effective Score and 12th Board % are identical.")
+                                        help="Used internally as a secondary tie-breaker if Effective Score and Qualifying % are identical.")
+
+        st.markdown("---")
+        qual_exam = st.selectbox("Select Qualifying Basis", ["-- Select --", "12th Board", "Diploma", "D.Voc"])
+        
+        perc_12th = 0.0
+        perc_dip = 0.0
+        
+        if qual_exam == "Diploma":
+            st.success("✅ **Note:** As a Diploma holder, you are considered equivalent to PCM. You are eligible for **Group-1 (All Branches)** and evaluated under **Priority 3**.")
+            perc_dip = st.number_input("Diploma (%)", min_value=0.0, max_value=100.0, value=75.0, step=0.1, help="Eligibility cutoff is 45% for GEN and 40% for Reserved categories.")
+            
+        elif qual_exam == "D.Voc":
+            st.info("📌 **Note:** You are eligible for the relevant branch in which you have passed the D.Voc. Evaluated under **Priority 4**.")
+            perc_dip = st.number_input("D.Voc (%)", min_value=0.0, max_value=100.0, value=75.0, step=0.1, help="Eligibility cutoff is 45% for GEN and 40% for Reserved categories.")
+            
+        elif qual_exam == "12th Board":
+            st.markdown("##### Select 12th Board Subjects (Choose 3 Mandatory Subjects)")
+            subject_list = [
+                "Physics", "Mathematics", "Chemistry", "Computer Science", 
+                "Electronics", "Information Technology", "Biology", 
+                "Informatics Practices", "Biotechnology", "Technical Vocational subject", 
+                "Agriculture", "Engineering Graphics", "Business Studies", "Entrepreneurship"
+            ]
+            
+            c_s1, c_s2, c_s3 = st.columns(3)
+            sub1 = c_s1.selectbox("Subject 1", ["-- Select --"] + subject_list)
+            sub2 = c_s2.selectbox("Subject 2", ["-- Select --"] + subject_list)
+            sub3 = c_s3.selectbox("Subject 3", ["-- Select --"] + subject_list)
+            
+            selected_subs = [s for s in [sub1, sub2, sub3] if s != "-- Select --"]
+            
+            if len(selected_subs) == 3:
+                if len(set(selected_subs)) < 3:
+                    st.error("❌ Please select three distinct subjects.")
+                else:
+                    subs_set = set(selected_subs)
+                    eligible_groups = []
+                    
+                    # AICTE Group Matching Logic
+                    if {"Physics", "Chemistry", "Mathematics"}.issubset(subs_set):
+                        eligible_groups.append("Group-1 (All Branches)")
+                    else:
+                        if {"Physics", "Mathematics"}.issubset(subs_set):
+                            eligible_groups.append("Group-2 (CS/IT/Electrical etc.)")
+                        if {"Physics", "Chemistry"}.issubset(subs_set):
+                            eligible_groups.append("Group-4 (Agriculture Engg/Textile Chem)")
+                        if "Mathematics" in subs_set and not {"Physics", "Mathematics"}.issubset(subs_set):
+                            eligible_groups.append("Group-6 (Planning)")
+                        if "Chemistry" in subs_set and not {"Physics", "Chemistry"}.issubset(subs_set):
+                            eligible_groups.append("Group-3 (Textile Chemistry)")
+                        if "Agriculture" in subs_set:
+                            eligible_groups.append("Group-5 (Agriculture Stream)")
+                            
+                    if eligible_groups:
+                        st.success(f"✅ You are eligible for: **{', '.join(eligible_groups)}**")
+                        
+                        with st.expander("📄 Click here for more (View Branch Groups)", expanded=False):
+                            st.markdown("""
+                            **AICTE Eligibility Groups for 12th Board Candidates:**
+                            * **Group 1:** Physics, Chemistry, Maths *(All Branches / B. Plan)*
+                            * **Group 2:** Physics, Maths, one additional subject *(CS/IT/AI/ML/Electrical/Electronics / B. Plan)*
+                            * **Group 3:** Chemistry, two additional subjects *(Textile Chemistry)*
+                            * **Group 4:** Physics, Chemistry, one additional subject *(Agriculture Engg / Smart Agritech / Textile Chemistry)*
+                            * **Group 5:** Agriculture Stream *(Agriculture Engg / Smart Agritech)*
+                            * **Group 6:** Maths, two additional subjects *(Planning)*
+                            """)
+                            
+                            if os.path.exists("Group_Branches.pdf"):
+                                with open("Group_Branches.pdf", "rb") as pdf_file:
+                                    st.download_button(
+                                        label="📥 Download Official Group_Branches.pdf", 
+                                        data=pdf_file.read(), 
+                                        file_name="Group_Branches.pdf", 
+                                        mime="application/pdf"
+                                    )
+                                    
+                        perc_12th = st.number_input("12th Board (%)", min_value=0.0, max_value=100.0, value=75.0, step=0.1, help="Eligibility cutoff is 45% for GEN and 40% for Reserved categories.")
+                    else:
+                        st.error("❌ Please select different subjects. This combination does not meet AICTE eligibility for any B.Tech/B.E. group.")
 
     with st.expander("🌍 Step 2: Demographics & Base Category", expanded=True):
         c3, c4 = st.columns(2)
@@ -123,8 +197,12 @@ with st.form("candidate_form", clear_on_submit=False):
 
 # --- 3. ALGORITHM EXECUTION & DASHBOARD ---
 if submitted:
-    st.toast("Elgibility Calculation Completed!", icon="✅")
+    st.toast("Eligibility Calculation Completed!", icon="✅")
     st.divider()
+
+    if qual_exam == "-- Select --":
+        st.error("⚠️ **Action Required:** Please select a Qualifying Basis (12th Board, Diploma, or D.Voc) in Step 1 to proceed.")
+        st.stop()
 
     backend_category = category.split(" ")[0]
 
@@ -153,38 +231,27 @@ if submitted:
         sports_quota = False
 
     req_cutoff = 45.0 if backend_category == "GEN" else 40.0
-    eligible_12th = perc_12th >= req_cutoff
-    eligible_dip = perc_dip >= req_cutoff
-    is_eligible = eligible_12th or eligible_dip
+    entered_perc = perc_12th if qual_exam == "12th Board" else perc_dip
+    is_eligible = entered_perc >= req_cutoff
 
     st.markdown("## 📊 Candidate Eligibility Dashboard")
 
     if not is_eligible:
         cat_text = "Kashmiri Migrant" if km_override_applied else backend_category
-
-        if perc_12th > 0 and perc_dip == 0:
-            st.error(
-                f"### ❌ Disqualified: Failed Eligibility Criteria\n{cat_text} Candidate requires {req_cutoff}% in 12th. Candidate scored in 12th: {perc_12th}%.")
-        elif perc_dip > 0 and perc_12th == 0:
-            st.error(
-                f"### ❌ Disqualified: Failed Eligibility Criteria\n{cat_text} Candidate requires {req_cutoff}% in Diploma. Candidate scored in Diploma: {perc_dip}%.")
-        else:
-            st.error(
-                f"### ❌ Disqualified: Failed Eligibility Criteria\n{cat_text} Candidate requires {req_cutoff}% in 12th OR Diploma. Candidate scored in 12th: {perc_12th}%, Diploma: {perc_dip}%.")
+        st.error(f"### ❌ Disqualified: Failed Eligibility Criteria\n{cat_text} Candidate requires {req_cutoff}% in {qual_exam}. Candidate scored in {qual_exam}: {entered_perc}%.")
 
     else:
         jee_basis = jee_score >= 20.0
-        srsec_basis = not jee_basis and eligible_12th
 
         if jee_basis:
             academic_priority = "Priority 2 (JEE)"
             base_score = jee_score
-        elif srsec_basis:
-            academic_priority = "Priority 3 (12th)"
-            base_score = perc_12th
-        else:
-            academic_priority = "Priority 4 (Diploma)"
-            base_score = perc_dip
+        elif qual_exam in ["12th Board", "Diploma"]:
+            academic_priority = f"Priority 3 ({qual_exam})"
+            base_score = entered_perc
+        elif qual_exam == "D.Voc":
+            academic_priority = "Priority 4 (D.Voc)"
+            base_score = entered_perc
 
         # Automated Sports Weightage & Priority A Logic
         effective_score = base_score

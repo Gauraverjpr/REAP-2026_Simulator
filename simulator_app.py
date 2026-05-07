@@ -66,7 +66,7 @@ with st.form("candidate_form", clear_on_submit=False):
         c1, c2 = st.columns(2)
         with c1:
             name = st.text_input("Candidate Name", "")
-            jee_score = st.number_input("JEE Mains Percentile (0 if none)", min_value=0.0, max_value=100.0, value=25.0,
+            jee_score = st.number_input("JEE Percentile (0 if none)", min_value=0.0, max_value=100.0, value=25.0,
                                         step=0.1, help="Rank obtained in JEE (Mains) 2026. Evaluated as Priority 2. Requires a minimum of 20 percentile.")
         with c2:
             dob = st.date_input("Date of Birth", datetime(2005, 1, 1),
@@ -140,14 +140,16 @@ with st.form("candidate_form", clear_on_submit=False):
                             * **Group 6:** Maths, two additional subjects *(Planning)*
                             """)
                             
+                            # FIXED HTML DOWNLOAD BUTTON (Bypasses st.form restrictions)
                             if os.path.exists("Group_Branches.pdf"):
                                 with open("Group_Branches.pdf", "rb") as pdf_file:
-                                    st.download_button(
-                                        label="📥 Download Official Group_Branches.pdf", 
-                                        data=pdf_file.read(), 
-                                        file_name="Group_Branches.pdf", 
-                                        mime="application/pdf"
-                                    )
+                                    pdf_b64 = base64.b64encode(pdf_file.read()).decode()
+                                    button_html = f'''
+                                    <a href="data:application/pdf;base64,{pdf_b64}" download="Group_Branches.pdf" style="display: inline-block; padding: 0.5rem 1rem; color: #FFFFFF; background-color: #112240; border: 1px solid #D4AF37; border-radius: 6px; text-decoration: none; font-weight: 600; text-align: center; margin-top: 10px;">
+                                        📥 Download Official Group_Branches.pdf
+                                    </a>
+                                    '''
+                                    st.markdown(button_html, unsafe_allow_html=True)
                                     
                         perc_12th = st.number_input("12th Board (%)", min_value=0.0, max_value=100.0, value=75.0, step=0.1, help="Eligibility cutoff is 45% for GEN and 40% for Reserved categories.")
                     else:
@@ -238,7 +240,17 @@ if submitted:
 
     if not is_eligible:
         cat_text = "Kashmiri Migrant" if km_override_applied else backend_category
-        st.error(f"### ❌ Disqualified: Failed Eligibility Criteria\n{cat_text} Candidate requires {req_cutoff}% in {qual_exam}. Candidate scored in {qual_exam}: {entered_perc}%.")
+        qual_name = qual_exam if qual_exam in ["Diploma", "D.Voc"] else "Qualifying Exam"
+
+        if perc_12th > 0 and perc_dip == 0:
+            st.error(
+                f"### ❌ Disqualified: Failed Eligibility Criteria\n{cat_text} Candidate requires {req_cutoff}% in 12th. Candidate scored in 12th: {perc_12th}%.")
+        elif perc_dip > 0 and perc_12th == 0:
+            st.error(
+                f"### ❌ Disqualified: Failed Eligibility Criteria\n{cat_text} Candidate requires {req_cutoff}% in {qual_name}. Candidate scored in {qual_name}: {perc_dip}%.")
+        else:
+            st.error(
+                f"### ❌ Disqualified: Failed Eligibility Criteria\n{cat_text} Candidate requires {req_cutoff}% in 12th OR {qual_name}. Candidate scored in 12th: {perc_12th}%, {qual_name}: {perc_dip}%.")
 
     else:
         jee_basis = jee_score >= 20.0

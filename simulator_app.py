@@ -66,7 +66,7 @@ with st.form("candidate_form", clear_on_submit=False):
         c1, c2 = st.columns(2)
         with c1:
             name = st.text_input("Candidate Name", "")
-            jee_score = st.number_input("JEE Percentile (0 if none)", min_value=0.0, max_value=100.0, value=25.0,
+            jee_score = st.number_input("JEE Mains Percentile (0 if none)", min_value=0.0, max_value=100.0, value=25.0,
                                         step=0.1, help="Rank obtained in JEE (Mains) 2026. Evaluated as Priority 2. Requires a minimum of 20 percentile.")
         with c2:
             dob = st.date_input("Date of Birth", datetime(2005, 1, 1),

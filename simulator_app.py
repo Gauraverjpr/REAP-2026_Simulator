@@ -102,7 +102,9 @@ with st.expander("🎓 Step 1: Academic Information", expanded=True):
         perc_dvoc = st.number_input("D.Voc (%)", min_value=0.0, max_value=100.0, value=75.0, step=0.1, help="Eligibility cutoff is 45% for GEN and 40% for Reserved categories.")
         
     elif qual_exam == "12th Board":
-        st.markdown("##### Select 12th Board Subjects (Choose 3 Mandatory Subjects)")
+        st.markdown("##### Select 12th Board Subjects")
+        st.caption("📌 **Note:** Choose 3 distinct mandatory subjects. If your stream is strictly Agriculture, select **'Agriculture Stream'** as Subject 1 (Subjects 2 and 3 will be locked automatically).")
+        
         subject_list = [
             "Physics", "Mathematics", "Chemistry", "Computer Science", 
             "Electronics", "Information Technology", "Biology", 
@@ -115,13 +117,13 @@ with st.expander("🎓 Step 1: Academic Information", expanded=True):
         # Subject 1 (Always Active)
         sub1 = c_s1.selectbox("Subject 1", ["-- Select --"] + subject_list)
         
-        # Subject 2 (Active only if Sub 1 is selected, Options exclude Sub 1)
-        sub2_options = ["-- Select --"] + [s for s in subject_list if s != sub1]
+        # Subject 2 (Active only if Sub 1 is selected, Options exclude Sub 1 and exclude Agriculture Stream entirely)
+        sub2_options = ["-- Select --"] + [s for s in subject_list if s != sub1 and s != "Agriculture Stream"]
         is_sub2_disabled = (sub1 == "-- Select --" or sub1 == "Agriculture Stream")
         sub2 = c_s2.selectbox("Subject 2", sub2_options, disabled=is_sub2_disabled)
         
-        # Subject 3 (Active only if Sub 2 is selected, Options exclude Sub 1 & Sub 2)
-        sub3_options = ["-- Select --"] + [s for s in subject_list if s not in [sub1, sub2]]
+        # Subject 3 (Active only if Sub 2 is selected, Options exclude Sub 1, Sub 2, and exclude Agriculture Stream entirely)
+        sub3_options = ["-- Select --"] + [s for s in subject_list if s not in [sub1, sub2] and s != "Agriculture Stream"]
         is_sub3_disabled = (sub2 == "-- Select --" or sub1 == "Agriculture Stream")
         sub3 = c_s3.selectbox("Subject 3", sub3_options, disabled=is_sub3_disabled)
         

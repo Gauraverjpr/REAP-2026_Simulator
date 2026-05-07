@@ -62,29 +62,43 @@ st.warning(
 st.markdown("### 📋 Candidate Evaluation Details")
 
 with st.expander("🎓 Step 1: Academic Information", expanded=True):
-    c1, c2 = st.columns(2)
+    # Top Row: General Information
+    c1, c2, c3 = st.columns(3)
     with c1:
         name = st.text_input("Candidate Name", "")
-        jee_score = st.number_input("JEE Percentile (0 if none)", min_value=0.0, max_value=100.0, value=25.0,
-                                    step=0.1, help="Rank obtained in JEE (Mains) 2026. Evaluated as Priority 2. Requires a minimum of 20 percentile.")
     with c2:
         dob = st.date_input("Date of Birth", datetime(2005, 1, 1),
                             help="Used as the final tie-breaker. Older candidates rank higher.")
+    with c3:
         perc_10th = st.number_input("10th Board (%)", min_value=0.0, max_value=100.0, value=80.0, step=0.1,
                                     help="Used internally as a secondary tie-breaker if Effective Score and Qualifying % are identical.")
 
     st.markdown("---")
-    qual_exam = st.selectbox("Select Qualifying Basis", ["-- Select --", "12th Board", "Diploma", "D.Voc"])
     
+    # Middle Row: Qualifying Exam & JEE Mains
+    c4, c5 = st.columns(2)
+    with c4:
+        qual_exam = st.selectbox("Select Qualifying Basis", ["-- Select --", "12th Board", "Diploma", "D.Voc"])
+    
+    with c5:
+        # Dynamically disable and zero out JEE Mains if Diploma or D.Voc is selected
+        is_jee_disabled = qual_exam in ["Diploma", "D.Voc"]
+        jee_score = st.number_input("JEE Mains Percentile (0 if none)", min_value=0.0, max_value=100.0, 
+                                    value=0.0 if is_jee_disabled else 25.0, step=0.1, disabled=is_jee_disabled, 
+                                    help="Rank obtained in JEE (Mains) 2026. Evaluated as Priority 2. Requires a minimum of 20 percentile (Not applicable for Diploma/D.Voc).")
+
     perc_12th = 0.0
     perc_diploma = 0.0
     perc_dvoc = 0.0
     selected_subs = []
     
+    # Bottom Row: Dynamic Form fields based on Qualifying Exam
     if qual_exam == "Diploma":
+        st.success("✅ **Note:** As a Diploma holder, you are considered equivalent to PCM. You are eligible for **Group-1 (All Branches)** and evaluated under **Priority 3**.")
         perc_diploma = st.number_input("Diploma (%)", min_value=0.0, max_value=100.0, value=75.0, step=0.1, help="Eligibility cutoff is 45% for GEN and 40% for Reserved categories.")
         
     elif qual_exam == "D.Voc":
+        st.info("📌 **Note:** You are eligible for the relevant branch in which you have passed the D.Voc. Evaluated under **Priority 4**.")
         perc_dvoc = st.number_input("D.Voc (%)", min_value=0.0, max_value=100.0, value=75.0, step=0.1, help="Eligibility cutoff is 45% for GEN and 40% for Reserved categories.")
         
     elif qual_exam == "12th Board":
@@ -227,13 +241,6 @@ if submitted:
             st.error("❌ Disqualified: This subject combination does not meet AICTE eligibility for any B.Tech/B.E. group.")
             st.stop()
 
-    elif qual_exam == "Diploma":
-        st.success("✅ **Note:** As a Diploma holder, you are considered equivalent to PCM. You are eligible for **Group-1 (All Branches)** and evaluated under **Priority 3**.")
-        
-    elif qual_exam == "D.Voc":
-        st.info("📌 **Note:** You are eligible for the relevant branch in which you have passed the D.Voc. Evaluated under **Priority 4**.")
-
-
     # --- DOMICILE & RESERVATION OVERRIDE LOGIC ---
     backend_category = category.split(" ")[0]
     km_override_applied = False
@@ -260,13 +267,16 @@ if submitted:
         sports_quota = False
 
     # Collect the specific percentage tied to the selected qualifying exam
+    # Forcefully ZERO OUT JEE Mains score if not 12th Board to prevent calculation errors
     entered_perc = 0.0
     if qual_exam == "12th Board":
         entered_perc = perc_12th
     elif qual_exam == "Diploma":
         entered_perc = perc_diploma
+        jee_score = 0.0 
     elif qual_exam == "D.Voc":
         entered_perc = perc_dvoc
+        jee_score = 0.0
 
     req_cutoff = 45.0 if backend_category == "GEN" else 40.0
     is_eligible_marks = entered_perc >= req_cutoff
@@ -277,11 +287,11 @@ if submitted:
         st.error(f"### ❌ Disqualified: Failed Eligibility Criteria\n{cat_text} Candidate requires {req_cutoff}% in {qual_exam}. Candidate scored in {qual_exam}: {entered_perc}%.")
 
     else:
-        jee_basis = jee_score >= 20.0
+        jee_basis = jee_score >= 20.0 and qual_exam == "12th Board"
 
         # Assign Priorities cleanly
         if jee_basis:
-            academic_priority = "Priority 2 (JEE)"
+            academic_priority = "Priority 2 (JEE Mains)"
             base_score = jee_score
         elif qual_exam == "12th Board":
             academic_priority = "Priority 3 (12th Board)"

@@ -122,6 +122,8 @@ T = {
     "scored_marks": "Candidate scored" if not is_hindi else "अभ्यर्थी ने प्राप्त किए",
     "priority_metric": "Calculated Priority Tier" if not is_hindi else "परिकलित प्राथमिकता स्तर",
     "matrix_metric": "Final Matrix Category" if not is_hindi else "अंतिम मैट्रिक्स श्रेणी",
+    "highest_eligible_delta": "Highest Eligible" if not is_hindi else "सर्वोच्च पात्र",
+    "outofstate_delta": "Out-of-State Override" if not is_hindi else "आउट-ऑफ-स्टेट ओवरराइड",
     "sports_fallback_msg": (
         "**Note:** Priority 1 is capped at 5% of total course seats. If candidate does not secure a Priority 1 seat, "
         "he/she will fall back to **{academic_priority}** with an Effective Academic Score of {effective_score:.2f}."

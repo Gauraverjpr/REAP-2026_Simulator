@@ -476,7 +476,8 @@ def generate_pdf_report(data):
         "    the actual REAP-2026 Centralized Admission Process after thorough verification of original documents."
     ), align='L')
     
-    return pdf.output()
+    # --- CRITICAL FIX: Convert bytearray to standard bytes for Streamlit ---
+    return bytes(pdf.output())
 
 
 # --- 6. INPUT LAYOUT (Dynamic & Reactive) ---

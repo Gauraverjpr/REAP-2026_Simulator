@@ -16,17 +16,8 @@ except ImportError:
 # --- 1. UI CONFIGURATION & THEME ---
 st.set_page_config(page_title="REAP-2026 Eligibility Simulator", page_icon="🏛️", layout="wide")
 
-# Columns for Theme and Language Selection at the top right
-col_hdr, col_theme, col_lang = st.columns([3.8, 1.2, 1.2])
-
-with col_theme:
-    selected_theme = st.selectbox(
-        "🌗 Theme / थीम",
-        ["Light", "Dark"],
-        index=0,
-        help="Switch display theme / डिस्प्ले थीम बदलें"
-    )
-
+# Columns for Language Selection at the top right
+col_hdr, col_lang = st.columns([5, 1.2])
 with col_lang:
     selected_language = st.selectbox(
         "🌐 Language / भाषा चुनें",
@@ -36,104 +27,6 @@ with col_lang:
     )
 
 is_hindi = (selected_language == "हिन्दी (Hindi)")
-
-# --- DYNAMIC THEME CSS INJECTION ---
-if selected_theme == "Light":
-    theme_axis_color = "#31333F"
-    chart_theme = None
-    st.markdown("""
-    <style>
-        /* Force App Background */
-        .stApp, .main, .block-container { background-color: #FFFFFF !important; }
-        
-        /* Force Text Colors */
-        p, span, label, h1, h2, h3, h4, h5, h6, li, .stMarkdown, .stText { color: #31333F !important; }
-        
-        /* Inputs */
-        .stTextInput input, .stNumberInput input, .stDateInput input { background-color: #FFFFFF !important; color: #31333F !important; border: 1px solid #CCCCCC !important; }
-        div[data-baseweb="select"] > div { background-color: #FFFFFF !important; color: #31333F !important; border: 1px solid #CCCCCC !important; }
-        
-        /* Dropdown Popovers (Portals) */
-        div[data-baseweb="popover"], div[data-baseweb="popover"] > div, ul[role="listbox"] { background-color: #FFFFFF !important; border-color: #CCCCCC !important; }
-        div[data-baseweb="popover"] li { color: #31333F !important; background-color: #FFFFFF !important; }
-        div[data-baseweb="popover"] li:hover, div[data-baseweb="popover"] li[aria-selected="true"], div[data-baseweb="popover"] li[aria-highlighted="true"] { background-color: #F0F2F6 !important; color: #112240 !important; }
-        
-        /* Date Picker Calendar (Portals) */
-        div[data-baseweb="calendar"], div[data-baseweb="calendar"] * { background-color: #FFFFFF !important; color: #31333F !important; }
-        div[data-baseweb="calendar"] [aria-selected="true"], div[data-baseweb="calendar"] [aria-selected="true"] * { background-color: #112240 !important; color: #FFFFFF !important; }
-        
-        /* Expanders */
-        [data-testid="stExpander"] { background-color: #F9FAFB !important; border: 1px solid #CCCCCC !important; }
-        [data-testid="stExpander"] details summary { background-color: #F0F2F6 !important; }
-        [data-testid="stExpander"] details summary svg { fill: #31333F !important; }
-        
-        /* Checkboxes */
-        div[data-baseweb="checkbox"] > div:first-child { background-color: #FFFFFF !important; border: 1px solid #CCCCCC !important; }
-        div[data-baseweb="checkbox"] input:checked + div { background-color: #112240 !important; border-color: #112240 !important; }
-        div[data-baseweb="checkbox"] input:checked + div svg { fill: #FFFFFF !important; color: #FFFFFF !important; }
-        
-        /* Buttons */
-        .stButton > button, [data-testid="stDownloadButton"] > button { background-color: #FFFFFF !important; color: #112240 !important; border: 1px solid #112240 !important; }
-        .stButton > button:hover, [data-testid="stDownloadButton"] > button:hover { border-color: #D4AF37 !important; color: #D4AF37 !important; background-color: #F0F2F6 !important; }
-        
-        /* Generic SVGs */
-        svg { fill: #31333F; }
-        
-        /* Protect Official Header */
-        .official-header p, .official-header h1, .official-header span { color: #FFFFFF !important; }
-        .official-header .highlight { color: #D4AF37 !important; }
-        .official-header img { filter: none !important; }
-    </style>
-    """, unsafe_allow_html=True)
-
-else:
-    theme_axis_color = "#FAFAFA"
-    chart_theme = "streamlit"
-    st.markdown("""
-    <style>
-        /* Force App Background */
-        .stApp, .main, .block-container { background-color: #0E1117 !important; }
-        
-        /* Force Text Colors */
-        p, span, label, h1, h2, h3, h4, h5, h6, li, .stMarkdown, .stText { color: #FAFAFA !important; }
-        
-        /* Inputs */
-        .stTextInput input, .stNumberInput input, .stDateInput input { background-color: #262730 !important; color: #FAFAFA !important; border: 1px solid #4B4B4B !important; }
-        div[data-baseweb="select"] > div { background-color: #262730 !important; color: #FAFAFA !important; border: 1px solid #4B4B4B !important; }
-        
-        /* Dropdown Popovers (Portals) */
-        div[data-baseweb="popover"], div[data-baseweb="popover"] > div, ul[role="listbox"] { background-color: #262730 !important; border-color: #4B4B4B !important; }
-        div[data-baseweb="popover"] li { color: #FAFAFA !important; background-color: #262730 !important; }
-        div[data-baseweb="popover"] li:hover, div[data-baseweb="popover"] li[aria-selected="true"], div[data-baseweb="popover"] li[aria-highlighted="true"] { background-color: #4B4B4B !important; color: #FFFFFF !important; }
-        
-        /* Date Picker Calendar (Portals) */
-        div[data-baseweb="calendar"], div[data-baseweb="calendar"] * { background-color: #262730 !important; color: #FAFAFA !important; }
-        div[data-baseweb="calendar"] [aria-selected="true"], div[data-baseweb="calendar"] [aria-selected="true"] * { background-color: #D4AF37 !important; color: #0E1117 !important; }
-        
-        /* Expanders */
-        [data-testid="stExpander"] { background-color: #1A1C24 !important; border: 1px solid #4B4B4B !important; }
-        [data-testid="stExpander"] details summary { background-color: #262730 !important; }
-        [data-testid="stExpander"] details summary svg { fill: #FAFAFA !important; }
-        
-        /* Checkboxes */
-        div[data-baseweb="checkbox"] > div:first-child { background-color: #262730 !important; border: 1px solid #4B4B4B !important; }
-        div[data-baseweb="checkbox"] input:checked + div { background-color: #D4AF37 !important; border-color: #D4AF37 !important; }
-        div[data-baseweb="checkbox"] input:checked + div svg { fill: #0E1117 !important; color: #0E1117 !important;}
-        
-        /* Buttons */
-        .stButton > button, [data-testid="stDownloadButton"] > button { background-color: #262730 !important; color: #FAFAFA !important; border: 1px solid #4B4B4B !important; }
-        .stButton > button:hover, [data-testid="stDownloadButton"] > button:hover { border-color: #D4AF37 !important; color: #D4AF37 !important; background-color: #4B4B4B !important; }
-        
-        /* Generic SVGs */
-        svg { fill: #FAFAFA; }
-        
-        /* Protect Official Header */
-        .official-header p, .official-header h1, .official-header span { color: #FFFFFF !important; }
-        .official-header .highlight { color: #D4AF37 !important; }
-        .official-header img { filter: none !important; }
-    </style>
-    """, unsafe_allow_html=True)
-
 
 # --- 2. TRANSLATION DICTIONARY (BILINGUAL ENGINE) ---
 T = {
@@ -186,7 +79,7 @@ T = {
     "subject_12_caption": (
         "📌 **Note:** Choose 3 distinct mandatory subjects. If your stream is strictly Agriculture, select **'Agriculture Stream'** as Subject 1 (Subjects 2 and 3 will be locked automatically)."
     ) if not is_hindi else (
-        "📌 **नोट:** 3 अलग-अलग अनिवार्य विषयों का चयन करें। यदि आपकी स्ट्रीम केवल कृषि (Agriculture) है, तो विषय 1 के रूप में **'Agriculture Stream'** चुनें (विषय 2 और विषय 3 स्वतः ही लॉक हो जाएंगे)।"
+        "📌 **नोट:** 3 अलग-अलग अनिवार्य विषयों का चयन करें। यदि आपकी स्ट्रीम केवल कृषि (Agriculture) है, तो विषय 1 के रूप में **'Agriculture Stream'** चुनें (विषय 2 और विषय 3 स्वतः ही लॉक বাতাসে जाएंगे)।"
     ),
     "sub1_label": "Subject 1" if not is_hindi else "विषय 1",
     "sub2_label": "Subject 2" if not is_hindi else "विषय 2",
@@ -409,12 +302,12 @@ st.markdown(f"""
     }}
     .header-logo {{ height: 100px; margin-right: 30px; }}
     .header-text {{ display: flex; flex-direction: column; justify-content: center; }}
-    .header-text h1 {{ font-family: 'Georgia', serif; font-weight: 800; margin: 0; margin-bottom: 5px; font-size: 2.6rem; color: #FFFFFF !important; line-height: 1.1; }}
-    .header-text p {{ margin: 0; font-size: 1.1rem; letter-spacing: 1px; color: #e2e8f0 !important; }}
-    .highlight {{ color: #D4AF37 !important; }}
+    .header-text h1 {{ font-family: 'Georgia', serif; font-weight: 800; margin: 0; margin-bottom: 5px; font-size: 2.6rem; color: #FFFFFF; line-height: 1.1; }}
+    .header-text p {{ margin: 0; font-size: 1.1rem; letter-spacing: 1px; color: #e2e8f0; }}
+    .highlight {{ color: #D4AF37; }}
     .stButton > button[kind="secondary"]:hover {{
-        border-color: #EF4444 !important; 
-        color: #EF4444 !important; 
+        border-color: #EF4444; 
+        color: #EF4444; 
     }}
 </style>
 <div class="official-header">
@@ -953,11 +846,10 @@ if submitted:
                 mode="gauge+number+delta",
                 value=effective_score,
                 domain={'x': [0, 1], 'y': [0, 1]},
-                title={'text': T["eff_academic_score"], 'font': {'size': 22, 'color': theme_axis_color}},
-                number={'font': {'color': theme_axis_color}}, 
+                title={'text': T["eff_academic_score"], 'font': {'size': 22}},
                 delta={'reference': base_score, 'increasing': {'color': "#10B981"}, 'position': "top"},
                 gauge={
-                    'axis': {'range': [None, 120], 'tickwidth': 1, 'tickcolor': theme_axis_color, 'tickfont': {'color': theme_axis_color}},
+                    'axis': {'range': [None, 120], 'tickwidth': 1},
                     'bar': {'color': "#D4AF37", 'thickness': 0.75},
                     'bgcolor': "rgba(0,0,0,0)",
                     'borderwidth': 2,
@@ -975,13 +867,11 @@ if submitted:
 
             fig.update_layout(
                 paper_bgcolor="rgba(0,0,0,0)",
-                plot_bgcolor="rgba(0,0,0,0)",
                 height=350,
-                margin=dict(l=20, r=20, t=50, b=20),
-                font=dict(color=theme_axis_color)
+                margin=dict(l=20, r=20, t=50, b=20)
             )
 
-            st.plotly_chart(fig, use_container_width=True, theme=None)
+            st.plotly_chart(fig, use_container_width=True, theme="streamlit")
 
             if sports_bonus_applied:
                 st.caption(T["sports_bonus_caption"].format(sports_weight=sports_weight, cat_letter=cat_letter))

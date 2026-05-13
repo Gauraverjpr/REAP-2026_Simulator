@@ -43,93 +43,48 @@ if selected_theme == "Dark":
     st.markdown("""
     <style>
         /* Base Theme Background */
-        .stApp, .main { background-color: #0E1117 !important; }
+        .stApp, .main, .block-container { background-color: #0E1117 !important; color: #FAFAFA !important; }
         
         /* Typography */
-        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .stText { color: #FAFAFA !important; }
+        h1, h2, h3, h4, h5, h6, p, label, span, .stMarkdown, .stText { color: #FAFAFA !important; }
         
-        /* Input Widgets */
-        .stTextInput input, .stNumberInput input, .stDateInput input { background-color: #262730 !important; color: #FAFAFA !important; border-color: #4B4B4B !important; }
-        [data-baseweb="select"] > div { background-color: #262730 !important; color: #FAFAFA !important; border-color: #4B4B4B !important; }
-        [data-baseweb="select"] span { color: #FAFAFA !important; }
-        [data-baseweb="popover"] { background-color: #262730 !important; }
+        /* Input Widgets & Dropdowns */
+        .stTextInput input, .stNumberInput input, .stDateInput input { background-color: #262730 !important; color: #FAFAFA !important; border: 1px solid #4B4B4B !important; }
+        div[data-baseweb="select"] > div { background-color: #262730 !important; color: #FAFAFA !important; border-color: #4B4B4B !important; }
+        div[data-baseweb="popover"] > div, ul[role="listbox"] { background-color: #262730 !important; color: #FAFAFA !important; border-color: #4B4B4B !important; }
         ul[role="listbox"] li { background-color: #262730 !important; color: #FAFAFA !important; }
+        ul[role="listbox"] li:hover, ul[role="listbox"] li[aria-selected="true"], ul[role="listbox"] li[aria-highlighted="true"] { background-color: #4B4B4B !important; color: #FFFFFF !important; }
+        
+        /* Calendar */
+        div[data-baseweb="calendar"], div[data-baseweb="calendar"] * { background-color: #262730 !important; color: #FAFAFA !important; }
+        div[data-baseweb="calendar"] [aria-selected="true"], div[data-baseweb="calendar"] [aria-selected="true"] * { background-color: #D4AF37 !important; color: #112240 !important; }
+        
+        /* Checkboxes */
+        div[data-baseweb="checkbox"] > div:first-child { background-color: #262730 !important; border: 1px solid #4B4B4B !important; }
+        div[data-baseweb="checkbox"] input:checked + div { background-color: #D4AF37 !important; border-color: #D4AF37 !important; }
+        div[data-baseweb="checkbox"] input:checked + div svg { fill: #112240 !important; }
         
         /* Expanders */
-        [data-testid="stExpander"] { background-color: #1A1C24 !important; border-color: #4B4B4B !important; }
-        [data-testid="stExpander"] p { color: #FAFAFA !important; }
+        [data-testid="stExpander"] { background-color: #1A1C24 !important; border: 1px solid #4B4B4B !important; }
+        [data-testid="stExpander"] details summary { background-color: #262730 !important; }
+        [data-testid="stExpander"] details summary svg { fill: #FAFAFA !important; color: #FAFAFA !important; }
         
-        /* Button */
-        .stButton > button, [data-testid="stDownloadButton"] > button { background-color: #262730 !important; color: #FAFAFA !important; border-color: #4B4B4B !important; }
+        /* Buttons & Toasts */
+        .stButton > button, [data-testid="stDownloadButton"] > button { background-color: #262730 !important; color: #FAFAFA !important; border: 1px solid #4B4B4B !important; }
         .stButton > button:hover, [data-testid="stDownloadButton"] > button:hover { border-color: #D4AF37 !important; color: #D4AF37 !important; }
+        .stButton > button *, [data-testid="stDownloadButton"] > button * { color: #FAFAFA !important; }
+        div[data-testid="stToast"] { background-color: #1A1C24 !important; border: 1px solid #4B4B4B !important; }
+        svg { fill: #FAFAFA !important; color: #FAFAFA !important; }
         
-        /* Keep our custom header intact */
-        .header-text p { color: #e2e8f0 !important; }
-        .highlight { color: #D4AF37 !important; }
-        .header-text h1 { color: #FFFFFF !important; }
-    </style>
-    """, unsafe_allow_html=True)
-else:
-    theme_axis_color = "#31333F"
-    st.markdown("""
-    <style>
-        /* 1. Force Base Light Background */
-        .stApp, .main, .block-container { background-color: #FFFFFF !important; }
-        
-        /* 2. Universal Typography (Override all text, spans, labels) */
-        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .stText, span { color: #31333F !important; }
-        
-        /* 3. Input Widgets (Force Light on Inputs & DOB) */
-        .stTextInput input, .stNumberInput input, .stDateInput input { background-color: #FFFFFF !important; color: #31333F !important; border: 1px solid #D1D5DB !important; }
-        
-        /* Dropdowns (Main box) */
-        div[data-baseweb="select"] > div { background-color: #FFFFFF !important; color: #31333F !important; border-color: #D1D5DB !important; }
-        
-        /* React Portals: Dropdown Popover & Calendar Popover */
-        div[data-baseweb="popover"] > div { background-color: #FFFFFF !important; border-color: #D1D5DB !important; }
-        
-        /* Dropdown List Items */
-        ul[role="listbox"] { background-color: #FFFFFF !important; }
-        ul[role="listbox"] li { background-color: #FFFFFF !important; color: #31333F !important; }
-        ul[role="listbox"] li:hover, ul[role="listbox"] li[aria-selected="true"], ul[role="listbox"] li[aria-highlighted="true"] { background-color: #E5E7EB !important; color: #112240 !important; }
-        
-        /* Date Picker Calendar Internals */
-        div[data-baseweb="calendar"] { background-color: #FFFFFF !important; }
-        div[data-baseweb="calendar"] * { color: #31333F !important; }
-        div[data-baseweb="calendar"] [aria-selected="true"], div[data-baseweb="calendar"] [aria-selected="true"] * { background-color: #112240 !important; color: #FFFFFF !important; }
-        
-        /* 4. SVGs & Icons (Expander arrows, calendar, +/- buttons) */
-        svg { fill: #31333F !important; color: #31333F !important; }
-        [data-testid="stNumberInputStepUp"], [data-testid="stNumberInputStepDown"] { background-color: #F3F4F6 !important; }
-        
-        /* 5. Checkboxes (Kill the default blue) */
-        div[data-baseweb="checkbox"] > div:first-child { background-color: #FFFFFF !important; border: 1px solid #D1D5DB !important; }
-        div[data-baseweb="checkbox"] input:checked + div { background-color: #112240 !important; border-color: #112240 !important; }
-        div[data-baseweb="checkbox"] input:checked + div svg { fill: #FFFFFF !important; stroke: #FFFFFF !important; color: #FFFFFF !important; }
-
-        /* 6. Expanders and arrows */
-        [data-testid="stExpander"] { background-color: #F9FAFB !important; border: 1px solid #D1D5DB !important; }
-        [data-testid="stExpander"] details summary { background-color: #F3F4F6 !important; }
-        [data-testid="stExpander"] details summary:hover { background-color: #E5E7EB !important; }
-        [data-testid="stExpander"] details summary svg { fill: #31333F !important; color: #31333F !important; }
-        
-        /* 7. Buttons & Links (Kill the blue hyperlinks) */
-        .stButton > button, [data-testid="stDownloadButton"] > button { background-color: #FFFFFF !important; color: #112240 !important; border: 1px solid #112240 !important; }
-        .stButton > button:hover, [data-testid="stDownloadButton"] > button:hover { background-color: #F3F4F6 !important; border-color: #112240 !important; }
-        .stButton > button *, [data-testid="stDownloadButton"] > button * { color: #112240 !important; }
-        a { color: #112240 !important; font-weight: bold !important; text-decoration: underline !important; }
-        
-        /* 8. Toasts / Notifications */
-        div[data-testid="stToast"] { background-color: #FFFFFF !important; border: 2px solid #112240 !important; box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important; }
-        div[data-testid="stToast"] *, div[data-testid="stToast"] p { color: #112240 !important; font-weight: 600 !important; }
-        div[data-testid="stToast"] svg { fill: #10B981 !important; color: #10B981 !important; } /* Green Checkmark */
-
-        /* 9. Keep Header Intact */
+        /* Keep Custom Header Intact */
         .official-header p, .official-header h1, .official-header span { color: #FFFFFF !important; }
         .official-header .highlight { color: #D4AF37 !important; }
         .official-header img { filter: none !important; }
     </style>
     """, unsafe_allow_html=True)
+else:
+    theme_axis_color = "#31333F"
+    # By leaving this empty, we allow Streamlit to use its flawless, native Light Mode without any CSS bugs!
 
 
 # --- 2. TRANSLATION DICTIONARY (BILINGUAL ENGINE) ---
@@ -255,7 +210,7 @@ T = {
         "exclusively in the Working Professionals list (`mwp`). No other state or horizontal reservations apply."
     ) if not is_hindi else (
         "🛑 **कार्यरत पेशेवर (WORKING PROFESSIONAL) विशेष पूल**\n\nअभ्यर्थी को मुख्य प्रवेश पूल से हटा दिया जाता है और विशेष रूप से "
-        "कार्यरत पेशेवर सूची (`mwp`) में रखा जाता है। कोई अन्य राज्य या क्षैतिज आरक्षण लागू नहीं होता है।"
+        "कार्यरत पेशेवर सूची (`mwp`) में रखा जाता है। कोई अन्य राज्य या क्षैतिज आरक्षण लागू नहीं বোর্  होता है।"
     ),
     "fn_exclusive_error": (
         "🛑 **FOREIGN NATIONAL / GULF EXCLUSIVE POOL**\n\nCandidate is placed exclusively in the Foreign National list (`mfn`). "

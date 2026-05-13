@@ -49,7 +49,7 @@ if selected_theme == "Dark":
         h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .stText { color: #FAFAFA !important; }
         
         /* Input Widgets */
-        .stTextInput input, .stNumberInput input { background-color: #262730 !important; color: #FAFAFA !important; border-color: #4B4B4B !important; }
+        .stTextInput input, .stNumberInput input, .stDateInput input { background-color: #262730 !important; color: #FAFAFA !important; border-color: #4B4B4B !important; }
         [data-baseweb="select"] > div { background-color: #262730 !important; color: #FAFAFA !important; border-color: #4B4B4B !important; }
         [data-baseweb="select"] span { color: #FAFAFA !important; }
         [data-baseweb="popover"] { background-color: #262730 !important; }
@@ -74,23 +74,31 @@ else:
     st.markdown("""
     <style>
         /* 1. Force Base Light Background */
-        .stApp, .main { background-color: #FFFFFF !important; }
+        .stApp, .main, .block-container { background-color: #FFFFFF !important; }
         
         /* 2. Universal Typography (Override all text, spans, labels) */
         h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .stText, span { color: #31333F !important; }
         
-        /* 3. Input Widgets (Force Light) */
-        .stTextInput input, .stNumberInput input { background-color: #FFFFFF !important; color: #31333F !important; border-color: #D1D5DB !important; }
+        /* 3. Input Widgets (Force Light on Inputs & DOB) */
+        .stTextInput input, .stNumberInput input, .stDateInput input { background-color: #FFFFFF !important; color: #31333F !important; border: 1px solid #D1D5DB !important; }
         
-        /* Dropdowns & Calendars (Targeting global popovers outside main container) */
+        /* Dropdowns (Main box) */
         div[data-baseweb="select"] > div { background-color: #FFFFFF !important; color: #31333F !important; border-color: #D1D5DB !important; }
-        div[data-baseweb="popover"], div[data-baseweb="popover"] > div { background-color: #FFFFFF !important; border-color: #D1D5DB !important; }
-        div[data-baseweb="popover"] * { color: #31333F !important; }
-        ul[role="listbox"] li { background-color: #FFFFFF !important; color: #31333F !important; }
-        ul[role="listbox"] li:hover, ul[role="listbox"] li[aria-selected="true"] { background-color: #112240 !important; color: #FFFFFF !important; }
-        div[data-baseweb="calendar"] [aria-selected="true"] { background-color: #112240 !important; color: #FFFFFF !important; }
         
-        /* 4. SVGs & Icons (+/- buttons, calendar icon) */
+        /* React Portals: Dropdown Popover & Calendar Popover */
+        div[data-baseweb="popover"] > div { background-color: #FFFFFF !important; border-color: #D1D5DB !important; }
+        
+        /* Dropdown List Items */
+        ul[role="listbox"] { background-color: #FFFFFF !important; }
+        ul[role="listbox"] li { background-color: #FFFFFF !important; color: #31333F !important; }
+        ul[role="listbox"] li:hover, ul[role="listbox"] li[aria-selected="true"], ul[role="listbox"] li[aria-highlighted="true"] { background-color: #E5E7EB !important; color: #112240 !important; }
+        
+        /* Date Picker Calendar Internals */
+        div[data-baseweb="calendar"] { background-color: #FFFFFF !important; }
+        div[data-baseweb="calendar"] * { color: #31333F !important; }
+        div[data-baseweb="calendar"] [aria-selected="true"], div[data-baseweb="calendar"] [aria-selected="true"] * { background-color: #112240 !important; color: #FFFFFF !important; }
+        
+        /* 4. SVGs & Icons (Expander arrows, calendar, +/- buttons) */
         svg { fill: #31333F !important; color: #31333F !important; }
         [data-testid="stNumberInputStepUp"], [data-testid="stNumberInputStepDown"] { background-color: #F3F4F6 !important; }
         

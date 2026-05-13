@@ -79,6 +79,22 @@ else:
         /* Typography */
         h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .stText { color: #31333F !important; }
         
+        /* Input Widgets (Force Light) */
+        .stTextInput input, .stNumberInput input { background-color: #FFFFFF !important; color: #31333F !important; border-color: #D1D5DB !important; }
+        [data-baseweb="select"] > div { background-color: #FFFFFF !important; color: #31333F !important; border-color: #D1D5DB !important; }
+        [data-baseweb="select"] span { color: #31333F !important; }
+        [data-baseweb="popover"] { background-color: #FFFFFF !important; }
+        ul[role="listbox"] li { background-color: #FFFFFF !important; color: #31333F !important; }
+        
+        /* Expanders (Force Light so they don't turn navy) */
+        [data-testid="stExpander"] { background-color: #F9FAFB !important; border-color: #D1D5DB !important; }
+        [data-testid="stExpander"] details summary { background-color: #F3F4F6 !important; }
+        [data-testid="stExpander"] p { color: #31333F !important; }
+        
+        /* Button */
+        .stButton > button { background-color: #FFFFFF !important; color: #31333F !important; border-color: #D1D5DB !important; }
+        .stButton > button:hover { border-color: #EF4444 !important; color: #EF4444 !important; }
+
         /* Keep our custom header intact */
         .header-text p { color: #e2e8f0 !important; }
         .highlight { color: #D4AF37 !important; }

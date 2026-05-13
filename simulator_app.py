@@ -16,8 +16,17 @@ except ImportError:
 # --- 1. UI CONFIGURATION & THEME ---
 st.set_page_config(page_title="REAP-2026 Eligibility Simulator", page_icon="🏛️", layout="wide")
 
-# Columns for Language Selection at the top right
-col_hdr, col_lang = st.columns([5, 1.2])
+# Columns for Theme and Language Selection at the top right
+col_hdr, col_theme, col_lang = st.columns([3.8, 1.2, 1.2])
+
+with col_theme:
+    selected_theme = st.selectbox(
+        "🌗 Theme / थीम",
+        ["Light", "Dark"],
+        index=0,
+        help="Switch display theme / डिस्प्ले थीम बदलें"
+    )
+
 with col_lang:
     selected_language = st.selectbox(
         "🌐 Language / भाषा चुनें",
@@ -27,6 +36,56 @@ with col_lang:
     )
 
 is_hindi = (selected_language == "हिन्दी (Hindi)")
+
+# --- DYNAMIC THEME CSS INJECTION ---
+if selected_theme == "Dark":
+    theme_axis_color = "#FAFAFA"
+    st.markdown("""
+    <style>
+        /* Base Theme Background */
+        .stApp, .main { background-color: #0E1117 !important; }
+        
+        /* Typography */
+        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .stText { color: #FAFAFA !important; }
+        
+        /* Input Widgets */
+        .stTextInput input, .stNumberInput input { background-color: #262730 !important; color: #FAFAFA !important; border-color: #4B4B4B !important; }
+        [data-baseweb="select"] > div { background-color: #262730 !important; color: #FAFAFA !important; border-color: #4B4B4B !important; }
+        [data-baseweb="select"] span { color: #FAFAFA !important; }
+        [data-baseweb="popover"] { background-color: #262730 !important; }
+        ul[role="listbox"] li { background-color: #262730 !important; color: #FAFAFA !important; }
+        
+        /* Expanders */
+        [data-testid="stExpander"] { background-color: #1A1C24 !important; border-color: #4B4B4B !important; }
+        [data-testid="stExpander"] p { color: #FAFAFA !important; }
+        
+        /* Button */
+        .stButton > button { background-color: #262730 !important; color: #FAFAFA !important; border-color: #4B4B4B !important; }
+        .stButton > button:hover { border-color: #D4AF37 !important; color: #D4AF37 !important; }
+        
+        /* Keep our custom header intact */
+        .header-text p { color: #e2e8f0 !important; }
+        .highlight { color: #D4AF37 !important; }
+        .header-text h1 { color: #FFFFFF !important; }
+    </style>
+    """, unsafe_allow_html=True)
+else:
+    theme_axis_color = "#31333F"
+    st.markdown("""
+    <style>
+        /* Force Base Light Background */
+        .stApp, .main { background-color: #FFFFFF !important; }
+        
+        /* Typography */
+        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .stText { color: #31333F !important; }
+        
+        /* Keep our custom header intact */
+        .header-text p { color: #e2e8f0 !important; }
+        .highlight { color: #D4AF37 !important; }
+        .header-text h1 { color: #FFFFFF !important; }
+    </style>
+    """, unsafe_allow_html=True)
+
 
 # --- 2. TRANSLATION DICTIONARY (BILINGUAL ENGINE) ---
 T = {
@@ -151,7 +210,7 @@ T = {
         "exclusively in the Working Professionals list (`mwp`). No other state or horizontal reservations apply."
     ) if not is_hindi else (
         "🛑 **कार्यरत पेशेवर (WORKING PROFESSIONAL) विशेष पूल**\n\nअभ्यर्थी को मुख्य प्रवेश पूल से हटा दिया जाता है और विशेष रूप से "
-        "कार्यरत पेशेवर सूची (`mwp`) में रखा जाता है। कोई अन्य राज्य या क्षैतिज आरक्षण लागू नहीं বোর্  होता है।"
+        "कार्यरत पेशेवर सूची (`mwp`) में रखा जाता है। कोई अन्य राज्य या क्षैतिज आरक्षण लागू नहीं होता है।"
     ),
     "fn_exclusive_error": (
         "🛑 **FOREIGN NATIONAL / GULF EXCLUSIVE POOL**\n\nCandidate is placed exclusively in the Foreign National list (`mfn`). "
@@ -846,10 +905,10 @@ if submitted:
                 mode="gauge+number+delta",
                 value=effective_score,
                 domain={'x': [0, 1], 'y': [0, 1]},
-                title={'text': T["eff_academic_score"], 'font': {'size': 22}},
+                title={'text': T["eff_academic_score"], 'font': {'size': 22, 'color': theme_axis_color}},
                 delta={'reference': base_score, 'increasing': {'color': "#10B981"}, 'position': "top"},
                 gauge={
-                    'axis': {'range': [None, 120], 'tickwidth': 1},
+                    'axis': {'range': [None, 120], 'tickwidth': 1, 'tickcolor': theme_axis_color, 'tickfont': {'color': theme_axis_color}},
                     'bar': {'color': "#D4AF37", 'thickness': 0.75},
                     'bgcolor': "rgba(0,0,0,0)",
                     'borderwidth': 2,

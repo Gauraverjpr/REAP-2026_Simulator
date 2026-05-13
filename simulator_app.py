@@ -16,8 +16,17 @@ except ImportError:
 # --- 1. UI CONFIGURATION & THEME ---
 st.set_page_config(page_title="REAP-2026 Eligibility Simulator", page_icon="🏛️", layout="wide")
 
-# Columns for Language Selection at the top right
-col_hdr, col_lang = st.columns([5, 1.2])
+# Columns for Theme and Language Selection at the top right
+col_hdr, col_theme, col_lang = st.columns([3.8, 1.2, 1.2])
+
+with col_theme:
+    selected_theme = st.selectbox(
+        "🌗 Theme / थीम",
+        ["Light", "Dark"],
+        index=0,
+        help="Switch display theme / डिस्प्ले थीम बदलें"
+    )
+
 with col_lang:
     selected_language = st.selectbox(
         "🌐 Language / भाषा चुनें",
@@ -27,6 +36,65 @@ with col_lang:
     )
 
 is_hindi = (selected_language == "हिन्दी (Hindi)")
+
+# --- DYNAMIC THEME ENGINE ---
+if selected_theme == "Dark":
+    theme_axis_color = "#FAFAFA"
+    chart_theme = "streamlit"
+    
+    # Inject ONLY Dark Mode CSS. (You confirmed this looked okay earlier!)
+    st.markdown("""
+    <style>
+        /* App Background */
+        .stApp, .main, .block-container { background-color: #0E1117 !important; color: #FAFAFA !important; }
+        
+        /* Typography */
+        h1, h2, h3, h4, h5, h6, p, label, span, .stMarkdown, .stText { color: #FAFAFA !important; }
+        
+        /* Inputs & Dropdowns */
+        .stTextInput input, .stNumberInput input, .stDateInput input { background-color: #262730 !important; color: #FAFAFA !important; border: 1px solid #4B4B4B !important; }
+        div[data-baseweb="select"] > div { background-color: #262730 !important; color: #FAFAFA !important; border-color: #4B4B4B !important; }
+        
+        /* React Portals (Popovers & Calendars) */
+        div[data-baseweb="popover"], div[data-baseweb="popover"] > div, ul[role="listbox"] { background-color: #262730 !important; border-color: #4B4B4B !important; }
+        ul[role="listbox"] li { background-color: #262730 !important; color: #FAFAFA !important; }
+        ul[role="listbox"] li:hover, ul[role="listbox"] li[aria-selected="true"] { background-color: #4B4B4B !important; color: #FFFFFF !important; }
+        
+        div[data-baseweb="calendar"], div[data-baseweb="calendar"] * { background-color: #262730 !important; color: #FAFAFA !important; }
+        div[data-baseweb="calendar"] [aria-selected="true"], div[data-baseweb="calendar"] [aria-selected="true"] * { background-color: #D4AF37 !important; color: #0E1117 !important; }
+        
+        /* Expanders */
+        [data-testid="stExpander"] { background-color: #1A1C24 !important; border: 1px solid #4B4B4B !important; }
+        [data-testid="stExpander"] details summary { background-color: #262730 !important; }
+        [data-testid="stExpander"] details summary svg { fill: #FAFAFA !important; }
+        
+        /* Checkboxes */
+        div[data-baseweb="checkbox"] > div:first-child { background-color: #262730 !important; border: 1px solid #4B4B4B !important; }
+        div[data-baseweb="checkbox"] input:checked + div { background-color: #D4AF37 !important; border-color: #D4AF37 !important; }
+        div[data-baseweb="checkbox"] input:checked + div svg { fill: #0E1117 !important; }
+        
+        /* Buttons & Toasts */
+        .stButton > button, [data-testid="stDownloadButton"] > button { background-color: #262730 !important; color: #FAFAFA !important; border: 1px solid #4B4B4B !important; }
+        .stButton > button:hover, [data-testid="stDownloadButton"] > button:hover { border-color: #D4AF37 !important; color: #D4AF37 !important; }
+        div[data-testid="stToast"] { background-color: #1A1C24 !important; border: 1px solid #4B4B4B !important; }
+        div[data-testid="stToast"] * { color: #FAFAFA !important; }
+        
+        /* SVGs */
+        svg { fill: #FAFAFA; }
+        
+        /* Protect Official Header */
+        .official-header p, .official-header h1, .official-header span { color: #FFFFFF !important; }
+        .official-header .highlight { color: #D4AF37 !important; }
+        .official-header img { filter: none !important; }
+    </style>
+    """, unsafe_allow_html=True)
+else:
+    # --- ZERO CSS FOR LIGHT MODE ---
+    # By injecting absolutely nothing here, Streamlit falls back to its native Light Theme.
+    # No invisible fonts, no blue boxes, 100% stable.
+    theme_axis_color = "#31333F"
+    chart_theme = None
+
 
 # --- 2. TRANSLATION DICTIONARY (BILINGUAL ENGINE) ---
 T = {
@@ -151,7 +219,7 @@ T = {
         "exclusively in the Working Professionals list (`mwp`). No other state or horizontal reservations apply."
     ) if not is_hindi else (
         "🛑 **कार्यरत पेशेवर (WORKING PROFESSIONAL) विशेष पूल**\n\nअभ्यर्थी को मुख्य प्रवेश पूल से हटा दिया जाता है और विशेष रूप से "
-        "कार्यरत पेशेवर सूची (`mwp`) में रखा जाता है। कोई अन्य राज्य या क्षैतिज आरक्षण लागू नहीं বোর্  होता है।"
+        "कार्यरत पेशेवर सूची (`mwp`) में रखा जाता है। कोई अन्य राज्य या क्षैतिज आरक्षण लागू नहीं होता है।"
     ),
     "fn_exclusive_error": (
         "🛑 **FOREIGN NATIONAL / GULF EXCLUSIVE POOL**\n\nCandidate is placed exclusively in the Foreign National list (`mfn`). "
@@ -302,12 +370,12 @@ st.markdown(f"""
     }}
     .header-logo {{ height: 100px; margin-right: 30px; }}
     .header-text {{ display: flex; flex-direction: column; justify-content: center; }}
-    .header-text h1 {{ font-family: 'Georgia', serif; font-weight: 800; margin: 0; margin-bottom: 5px; font-size: 2.6rem; color: #FFFFFF; line-height: 1.1; }}
-    .header-text p {{ margin: 0; font-size: 1.1rem; letter-spacing: 1px; color: #e2e8f0; }}
-    .highlight {{ color: #D4AF37; }}
+    .header-text h1 {{ font-family: 'Georgia', serif; font-weight: 800; margin: 0; margin-bottom: 5px; font-size: 2.6rem; color: #FFFFFF !important; line-height: 1.1; }}
+    .header-text p {{ margin: 0; font-size: 1.1rem; letter-spacing: 1px; color: #e2e8f0 !important; }}
+    .highlight {{ color: #D4AF37 !important; }}
     .stButton > button[kind="secondary"]:hover {{
-        border-color: #EF4444; 
-        color: #EF4444; 
+        border-color: #EF4444 !important; 
+        color: #EF4444 !important; 
     }}
 </style>
 <div class="official-header">
@@ -867,11 +935,13 @@ if submitted:
 
             fig.update_layout(
                 paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
                 height=350,
-                margin=dict(l=20, r=20, t=50, b=20)
+                margin=dict(l=20, r=20, t=50, b=20),
+                font=dict(color=theme_axis_color)
             )
 
-            st.plotly_chart(fig, use_container_width=True, theme="streamlit")
+            st.plotly_chart(fig, use_container_width=True, theme=chart_theme)
 
             if sports_bonus_applied:
                 st.caption(T["sports_bonus_caption"].format(sports_weight=sports_weight, cat_letter=cat_letter))

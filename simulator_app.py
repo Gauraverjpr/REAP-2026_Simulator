@@ -73,32 +73,48 @@ else:
     theme_axis_color = "#31333F"
     st.markdown("""
     <style>
-        /* Force Base Light Background */
+        /* 1. Force Base Light Background */
         .stApp, .main { background-color: #FFFFFF !important; }
         
-        /* Typography */
-        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .stText { color: #31333F !important; }
+        /* 2. Universal Typography (Override all text, spans, labels) */
+        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .stText, span { color: #31333F !important; }
         
-        /* Input Widgets (Force Light) */
+        /* 3. Input Widgets (Force Light) */
         .stTextInput input, .stNumberInput input { background-color: #FFFFFF !important; color: #31333F !important; border-color: #D1D5DB !important; }
-        [data-baseweb="select"] > div { background-color: #FFFFFF !important; color: #31333F !important; border-color: #D1D5DB !important; }
-        [data-baseweb="select"] span { color: #31333F !important; }
-        [data-baseweb="popover"] { background-color: #FFFFFF !important; }
-        ul[role="listbox"] li { background-color: #FFFFFF !important; color: #31333F !important; }
         
-        /* Expanders (Force Light so they don't turn navy) */
+        /* Dropdowns */
+        [data-baseweb="select"] > div { background-color: #FFFFFF !important; color: #31333F !important; border-color: #D1D5DB !important; }
+        [data-baseweb="popover"] { background-color: #FFFFFF !important; border: 1px solid #D1D5DB !important; }
+        ul[role="listbox"] li { background-color: #FFFFFF !important; color: #31333F !important; }
+        ul[role="listbox"] li:hover, ul[role="listbox"] li[aria-selected="true"] { background-color: #E5E7EB !important; color: #112240 !important; }
+        
+        /* 4. SVGs & Icons (Expander arrows, calendar, +/- buttons) */
+        svg { fill: #31333F !important; color: #31333F !important; }
+        [data-testid="stNumberInputStepUp"], [data-testid="stNumberInputStepDown"] { background-color: #F3F4F6 !important; }
+        
+        /* 5. Checkboxes (Kill the default blue) */
+        [data-baseweb="checkbox"] > div:first-child { background-color: #FFFFFF !important; border-color: #31333F !important; }
+        div[data-baseweb="checkbox"] input:checked + div { background-color: #112240 !important; border-color: #112240 !important; }
+        div[data-baseweb="checkbox"] input:checked + div svg { fill: #FFFFFF !important; } /* White checkmark */
+
+        /* 6. Expanders */
         [data-testid="stExpander"] { background-color: #F9FAFB !important; border-color: #D1D5DB !important; }
         [data-testid="stExpander"] details summary { background-color: #F3F4F6 !important; }
-        [data-testid="stExpander"] p { color: #31333F !important; }
+        [data-testid="stExpander"] details summary:hover { background-color: #E5E7EB !important; }
         
-        /* Button */
-        .stButton > button { background-color: #FFFFFF !important; color: #31333F !important; border-color: #D1D5DB !important; }
-        .stButton > button:hover { border-color: #EF4444 !important; color: #EF4444 !important; }
+        /* 7. Buttons & Links (Kill the blue hyperlinks) */
+        .stButton > button { background-color: #F9FAFB !important; color: #112240 !important; border-color: #D1D5DB !important; }
+        .stButton > button:hover { border-color: #112240 !important; }
+        a { color: #112240 !important; font-weight: bold !important; text-decoration: underline !important; }
+        
+        /* 8. Toasts / Notifications */
+        [data-testid="stToast"] { background-color: #FFFFFF !important; border: 1px solid #D1D5DB !important; box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important; }
+        [data-testid="stToast"] div, [data-testid="stToast"] span, [data-testid="stToast"] p { color: #112240 !important; }
 
-        /* Keep our custom header intact */
-        .header-text p { color: #e2e8f0 !important; }
-        .highlight { color: #D4AF37 !important; }
-        .header-text h1 { color: #FFFFFF !important; }
+        /* 9. Keep Header Intact */
+        .official-header p, .official-header h1, .official-header span { color: #FFFFFF !important; }
+        .official-header .highlight { color: #D4AF37 !important; }
+        .official-header img { filter: none !important; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -917,11 +933,13 @@ if submitted:
                 st.info(T["pdf_install_helper"])
 
         with dash_col2:
+            # FIX: Explicitly set the number font color to the theme axis color
             fig = go.Figure(go.Indicator(
                 mode="gauge+number+delta",
                 value=effective_score,
                 domain={'x': [0, 1], 'y': [0, 1]},
                 title={'text': T["eff_academic_score"], 'font': {'size': 22, 'color': theme_axis_color}},
+                number={'font': {'color': theme_axis_color}}, 
                 delta={'reference': base_score, 'increasing': {'color': "#10B981"}, 'position': "top"},
                 gauge={
                     'axis': {'range': [None, 120], 'tickwidth': 1, 'tickcolor': theme_axis_color, 'tickfont': {'color': theme_axis_color}},

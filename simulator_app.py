@@ -37,54 +37,140 @@ with col_lang:
 
 is_hindi = (selected_language == "हिन्दी (Hindi)")
 
-# --- DYNAMIC THEME CSS INJECTION ---
+# --- DYNAMIC THEME ENGINE ---
+# We define the specific color palettes for Light and Dark modes here
 if selected_theme == "Dark":
     theme_axis_color = "#FAFAFA"
-    st.markdown("""
-    <style>
-        /* Base Theme Background */
-        .stApp, .main, .block-container { background-color: #0E1117 !important; color: #FAFAFA !important; }
-        
-        /* Typography */
-        h1, h2, h3, h4, h5, h6, p, label, span, .stMarkdown, .stText { color: #FAFAFA !important; }
-        
-        /* Input Widgets & Dropdowns */
-        .stTextInput input, .stNumberInput input, .stDateInput input { background-color: #262730 !important; color: #FAFAFA !important; border: 1px solid #4B4B4B !important; }
-        div[data-baseweb="select"] > div { background-color: #262730 !important; color: #FAFAFA !important; border-color: #4B4B4B !important; }
-        div[data-baseweb="popover"] > div, ul[role="listbox"] { background-color: #262730 !important; color: #FAFAFA !important; border-color: #4B4B4B !important; }
-        ul[role="listbox"] li { background-color: #262730 !important; color: #FAFAFA !important; }
-        ul[role="listbox"] li:hover, ul[role="listbox"] li[aria-selected="true"], ul[role="listbox"] li[aria-highlighted="true"] { background-color: #4B4B4B !important; color: #FFFFFF !important; }
-        
-        /* Calendar */
-        div[data-baseweb="calendar"], div[data-baseweb="calendar"] * { background-color: #262730 !important; color: #FAFAFA !important; }
-        div[data-baseweb="calendar"] [aria-selected="true"], div[data-baseweb="calendar"] [aria-selected="true"] * { background-color: #D4AF37 !important; color: #112240 !important; }
-        
-        /* Checkboxes */
-        div[data-baseweb="checkbox"] > div:first-child { background-color: #262730 !important; border: 1px solid #4B4B4B !important; }
-        div[data-baseweb="checkbox"] input:checked + div { background-color: #D4AF37 !important; border-color: #D4AF37 !important; }
-        div[data-baseweb="checkbox"] input:checked + div svg { fill: #112240 !important; }
-        
-        /* Expanders */
-        [data-testid="stExpander"] { background-color: #1A1C24 !important; border: 1px solid #4B4B4B !important; }
-        [data-testid="stExpander"] details summary { background-color: #262730 !important; }
-        [data-testid="stExpander"] details summary svg { fill: #FAFAFA !important; color: #FAFAFA !important; }
-        
-        /* Buttons & Toasts */
-        .stButton > button, [data-testid="stDownloadButton"] > button { background-color: #262730 !important; color: #FAFAFA !important; border: 1px solid #4B4B4B !important; }
-        .stButton > button:hover, [data-testid="stDownloadButton"] > button:hover { border-color: #D4AF37 !important; color: #D4AF37 !important; }
-        .stButton > button *, [data-testid="stDownloadButton"] > button * { color: #FAFAFA !important; }
-        div[data-testid="stToast"] { background-color: #1A1C24 !important; border: 1px solid #4B4B4B !important; }
-        svg { fill: #FAFAFA !important; color: #FAFAFA !important; }
-        
-        /* Keep Custom Header Intact */
-        .official-header p, .official-header h1, .official-header span { color: #FFFFFF !important; }
-        .official-header .highlight { color: #D4AF37 !important; }
-        .official-header img { filter: none !important; }
-    </style>
-    """, unsafe_allow_html=True)
+    bg_color = "#0E1117"
+    text_color = "#FAFAFA"
+    sec_bg = "#262730"
+    prim_color = "#D4AF37"
+    btn_text = "#112240"
 else:
     theme_axis_color = "#31333F"
-    # By leaving this empty, we allow Streamlit to use its flawless, native Light Mode without any CSS bugs!
+    bg_color = "#FFFFFF"
+    text_color = "#31333F"
+    sec_bg = "#F0F2F6"
+    prim_color = "#112240"
+    btn_text = "#FFFFFF"
+
+# Unified CSS Injection that forcefully rewrites Streamlit's native elements and React Portals
+custom_css = f"""
+<style>
+    /* Force Global Streamlit Variables */
+    :root {{
+        --primary-color: {prim_color} !important;
+        --background-color: {bg_color} !important;
+        --secondary-background-color: {sec_bg} !important;
+        --text-color: {text_color} !important;
+    }}
+    
+    /* Main Container Backgrounds */
+    .stApp, .main, .block-container, [data-testid="stAppViewContainer"] {{
+        background-color: {bg_color} !important;
+        color: {text_color} !important;
+    }}
+    
+    [data-testid="stHeader"] {{
+        background-color: transparent !important;
+    }}
+    
+    /* Base Text Elements */
+    p, span, label, h1, h2, h3, h4, h5, h6, li, .stMarkdown, .stText {{
+        color: {text_color} !important;
+    }}
+    
+    /* --- PROTECT CEG HEADER --- */
+    .official-header p, .official-header h1, .official-header span {{ color: #FFFFFF !important; }}
+    .official-header .highlight {{ color: #D4AF37 !important; }}
+    
+    /* Inputs and Expander Containers */
+    .stTextInput input, .stNumberInput input, .stDateInput input {{
+        background-color: {bg_color} !important;
+        color: {text_color} !important;
+        border: 1px solid {sec_bg} !important;
+    }}
+    
+    [data-testid="stExpander"] {{
+        background-color: {bg_color} !important;
+        border: 1px solid {sec_bg} !important;
+    }}
+    [data-testid="stExpander"] details summary {{
+        background-color: {sec_bg} !important;
+    }}
+    [data-testid="stExpander"] details summary svg {{
+        fill: {text_color} !important;
+    }}
+    
+    /* SVG Icons (Arrows, +/- buttons) */
+    svg {{ fill: {text_color}; }}
+    
+    /* --- REACT PORTALS (Dropdowns & Calendars) --- */
+    /* These exist outside the main container, so they need explicit global targeting */
+    div[data-baseweb="select"] > div {{
+        background-color: {bg_color} !important;
+        color: {text_color} !important;
+        border: 1px solid {sec_bg} !important;
+    }}
+    div[data-baseweb="popover"], div[data-baseweb="popover"] > div, ul[role="listbox"] {{
+        background-color: {bg_color} !important;
+        border-color: {sec_bg} !important;
+    }}
+    ul[role="listbox"] li {{
+        background-color: transparent !important;
+        color: {text_color} !important;
+    }}
+    ul[role="listbox"] li:hover, ul[role="listbox"] li[aria-selected="true"] {{
+        background-color: {sec_bg} !important;
+        color: {prim_color} !important;
+    }}
+    
+    /* Calendar internals */
+    div[data-baseweb="calendar"], div[data-baseweb="calendar"] * {{
+        color: {text_color} !important;
+        background-color: {bg_color} !important;
+    }}
+    div[data-baseweb="calendar"] [aria-selected="true"], div[data-baseweb="calendar"] [aria-selected="true"] * {{
+        background-color: {prim_color} !important;
+        color: {btn_text} !important;
+    }}
+    
+    /* Checkboxes */
+    div[data-baseweb="checkbox"] > div:first-child {{
+        background-color: {bg_color} !important;
+        border: 1px solid {sec_bg} !important;
+    }}
+    div[data-baseweb="checkbox"] input:checked + div {{
+        background-color: {prim_color} !important;
+        border-color: {prim_color} !important;
+    }}
+    div[data-baseweb="checkbox"] input:checked + div svg {{
+        fill: {btn_text} !important;
+    }}
+    
+    /* Buttons & Toasts */
+    .stButton > button, [data-testid="stDownloadButton"] > button {{
+        background-color: {bg_color} !important;
+        color: {text_color} !important;
+        border: 1px solid {sec_bg} !important;
+    }}
+    .stButton > button:hover, [data-testid="stDownloadButton"] > button:hover {{
+        border-color: {prim_color} !important;
+        color: {prim_color} !important;
+    }}
+    div[data-testid="stToast"] {{
+        background-color: {bg_color} !important;
+        border: 2px solid {prim_color} !important;
+    }}
+    div[data-testid="stToast"] * {{
+        color: {text_color} !important;
+    }}
+    div[data-testid="stToast"] svg {{
+        fill: {prim_color} !important;
+    }}
+</style>
+"""
+st.markdown(custom_css, unsafe_allow_html=True)
 
 
 # --- 2. TRANSLATION DICTIONARY (BILINGUAL ENGINE) ---
@@ -210,7 +296,7 @@ T = {
         "exclusively in the Working Professionals list (`mwp`). No other state or horizontal reservations apply."
     ) if not is_hindi else (
         "🛑 **कार्यरत पेशेवर (WORKING PROFESSIONAL) विशेष पूल**\n\nअभ्यर्थी को मुख्य प्रवेश पूल से हटा दिया जाता है और विशेष रूप से "
-        "कार्यरत पेशेवर सूची (`mwp`) में रखा जाता है। कोई अन्य राज्य या क्षैतिज आरक्षण लागू नहीं বোর্  होता है।"
+        "कार्यरत पेशेवर सूची (`mwp`) में रखा जाता है। कोई अन्य राज्य या क्षैतिज आरक्षण लागू नहीं होता है।"
     ),
     "fn_exclusive_error": (
         "🛑 **FOREIGN NATIONAL / GULF EXCLUSIVE POOL**\n\nCandidate is placed exclusively in the Foreign National list (`mfn`). "
@@ -365,8 +451,8 @@ st.markdown(f"""
     .header-text p {{ margin: 0; font-size: 1.1rem; letter-spacing: 1px; color: #e2e8f0; }}
     .highlight {{ color: #D4AF37; }}
     .stButton > button[kind="secondary"]:hover {{
-        border-color: #EF4444; 
-        color: #EF4444; 
+        border-color: #EF4444 !important; 
+        color: #EF4444 !important; 
     }}
 </style>
 <div class="official-header">
@@ -535,7 +621,6 @@ def generate_pdf_report(data):
         "    the actual REAP-2026 Centralized Admission Process after thorough verification of original documents."
     ), align='L')
     
-    # --- CRITICAL FIX: Convert bytearray to standard bytes for Streamlit ---
     return bytes(pdf.output())
 
 
@@ -901,9 +986,6 @@ if submitted:
                 st.info(T["pdf_install_helper"])
 
         with dash_col2:
-            # FIX: Only use Streamlit's native Plotly theme if the user explicitly wants Dark Mode
-            chart_theme = "streamlit" if selected_theme == "Dark" else None
-            
             fig = go.Figure(go.Indicator(
                 mode="gauge+number+delta",
                 value=effective_score,
@@ -930,11 +1012,13 @@ if submitted:
 
             fig.update_layout(
                 paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
                 height=350,
-                margin=dict(l=20, r=20, t=50, b=20)
+                margin=dict(l=20, r=20, t=50, b=20),
+                font=dict(color=theme_axis_color)
             )
 
-            st.plotly_chart(fig, use_container_width=True, theme=chart_theme)
+            st.plotly_chart(fig, use_container_width=True, theme=None)
 
             if sports_bonus_applied:
                 st.caption(T["sports_bonus_caption"].format(sports_weight=sports_weight, cat_letter=cat_letter))

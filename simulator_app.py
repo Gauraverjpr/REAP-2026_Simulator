@@ -16,17 +16,8 @@ except ImportError:
 # --- 1. UI CONFIGURATION & THEME ---
 st.set_page_config(page_title="REAP-2026 Eligibility Simulator", page_icon="🏛️", layout="wide")
 
-# Columns for Theme and Language Selection at the top right
-col_hdr, col_theme, col_lang = st.columns([3.8, 1.2, 1.2])
-
-with col_theme:
-    selected_theme = st.selectbox(
-        "🌗 Theme / थीम",
-        ["Light", "Dark"],
-        index=0,
-        help="Switch display theme / डिस्प्ले थीम बदलें"
-    )
-
+# Columns for Language Selection at the top right
+col_hdr, col_lang = st.columns([5, 1.2])
 with col_lang:
     selected_language = st.selectbox(
         "🌐 Language / भाषा चुनें",
@@ -36,65 +27,6 @@ with col_lang:
     )
 
 is_hindi = (selected_language == "हिन्दी (Hindi)")
-
-# --- DYNAMIC THEME ENGINE ---
-if selected_theme == "Dark":
-    theme_axis_color = "#FFFFFF"
-    chart_theme = "streamlit"
-    
-    # Inject your custom Navy/Gold Theme explicitly for Dark Mode
-    st.markdown("""
-    <style>
-        /* App Background */
-        .stApp, .main, .block-container { background-color: #0A192F !important; color: #FFFFFF !important; }
-        
-        /* Typography */
-        h1, h2, h3, h4, h5, h6, p, label, span, .stMarkdown, .stText { color: #FFFFFF !important; }
-        
-        /* Inputs & Dropdowns */
-        .stTextInput input, .stNumberInput input, .stDateInput input { background-color: #112240 !important; color: #FFFFFF !important; border: 1px solid #112240 !important; }
-        div[data-baseweb="select"] > div { background-color: #112240 !important; color: #FFFFFF !important; border-color: #112240 !important; }
-        
-        /* React Portals (Popovers & Calendars) */
-        div[data-baseweb="popover"], div[data-baseweb="popover"] > div, ul[role="listbox"] { background-color: #112240 !important; border-color: #112240 !important; }
-        ul[role="listbox"] li { background-color: #112240 !important; color: #FFFFFF !important; }
-        ul[role="listbox"] li:hover, ul[role="listbox"] li[aria-selected="true"] { background-color: #D4AF37 !important; color: #0A192F !important; }
-        
-        div[data-baseweb="calendar"], div[data-baseweb="calendar"] * { background-color: #112240 !important; color: #FFFFFF !important; }
-        div[data-baseweb="calendar"] [aria-selected="true"], div[data-baseweb="calendar"] [aria-selected="true"] * { background-color: #D4AF37 !important; color: #0A192F !important; }
-        
-        /* Expanders */
-        [data-testid="stExpander"] { background-color: #0A192F !important; border: 1px solid #112240 !important; }
-        [data-testid="stExpander"] details summary { background-color: #112240 !important; }
-        [data-testid="stExpander"] details summary svg { fill: #FFFFFF !important; }
-        
-        /* Checkboxes */
-        div[data-baseweb="checkbox"] > div:first-child { background-color: #112240 !important; border: 1px solid #D4AF37 !important; }
-        div[data-baseweb="checkbox"] input:checked + div { background-color: #D4AF37 !important; border-color: #D4AF37 !important; }
-        div[data-baseweb="checkbox"] input:checked + div svg { fill: #0A192F !important; }
-        
-        /* Buttons & Toasts */
-        .stButton > button, [data-testid="stDownloadButton"] > button { background-color: #112240 !important; color: #FFFFFF !important; border: 1px solid #D4AF37 !important; }
-        .stButton > button:hover, [data-testid="stDownloadButton"] > button:hover { background-color: #D4AF37 !important; color: #0A192F !important; }
-        .stButton > button:hover *, [data-testid="stDownloadButton"] > button:hover * { color: #0A192F !important; }
-        div[data-testid="stToast"] { background-color: #112240 !important; border: 1px solid #D4AF37 !important; }
-        div[data-testid="stToast"] * { color: #FFFFFF !important; }
-        
-        /* SVGs */
-        svg { fill: #FFFFFF; }
-        
-        /* Protect Official Header */
-        .official-header p, .official-header h1, .official-header span { color: #FFFFFF !important; }
-        .official-header .highlight { color: #D4AF37 !important; }
-        .official-header img { filter: none !important; }
-    </style>
-    """, unsafe_allow_html=True)
-else:
-    # --- ZERO CSS FOR LIGHT MODE ---
-    # With your new config.toml (base="light"), Streamlit handles this flawlessly.
-    theme_axis_color = "#31333F"
-    chart_theme = None
-
 
 # --- 2. TRANSLATION DICTIONARY (BILINGUAL ENGINE) ---
 T = {
@@ -288,7 +220,7 @@ exs_options = [
     "EXS7 (भूतपूर्व सैनिकों की पत्नियां)", "EXS8 (सेवारत कर्मियों के आश्रित)", "EXS9 (सेवारत कर्मियों की पत्नियां)"
 ]
 exs_map = {
-    "None": "None", "कोई break": "None",
+    "None": "None", "कोई नहीं": "None",
     "EXS1 (Killed in action)": "EXS1 (Killed in action)", "EXS1 (युद्ध में शहीद)": "EXS1 (Killed in action)",
     "EXS2 (Disabled in action)": "EXS2 (Disabled in action)", "EXS2 (युद्ध में विकलांग)": "EXS2 (Disabled in action)",
     "EXS3 (Died in service)": "EXS3 (Died in service)", "EXS3 (सेवा के दौरान मृत्यु)": "EXS3 (Died in service)",
@@ -370,9 +302,9 @@ st.markdown(f"""
     }}
     .header-logo {{ height: 100px; margin-right: 30px; }}
     .header-text {{ display: flex; flex-direction: column; justify-content: center; }}
-    .header-text h1 {{ font-family: 'Georgia', serif; font-weight: 800; margin: 0; margin-bottom: 5px; font-size: 2.6rem; color: #FFFFFF !important; line-height: 1.1; }}
-    .header-text p {{ margin: 0; font-size: 1.1rem; letter-spacing: 1px; color: #e2e8f0 !important; }}
-    .highlight {{ color: #D4AF37 !important; }}
+    .header-text h1 {{ font-family: 'Georgia', serif; font-weight: 800; margin: 0; margin-bottom: 5px; font-size: 2.6rem; color: #FFFFFF; line-height: 1.1; }}
+    .header-text p {{ margin: 0; font-size: 1.1rem; letter-spacing: 1px; color: #e2e8f0; }}
+    .highlight {{ color: #D4AF37; }}
     .stButton > button[kind="secondary"]:hover {{
         border-color: #EF4444; 
         color: #EF4444; 
@@ -915,11 +847,10 @@ if submitted:
                 mode="gauge+number+delta",
                 value=effective_score,
                 domain={'x': [0, 1], 'y': [0, 1]},
-                title={'text': T["eff_academic_score"], 'font': {'size': 22, 'color': theme_axis_color}},
-                number={'font': {'color': theme_axis_color}},
+                title={'text': T["eff_academic_score"], 'font': {'size': 22}},
                 delta={'reference': base_score, 'increasing': {'color': "#10B981"}, 'position': "top"},
                 gauge={
-                    'axis': {'range': [None, 120], 'tickwidth': 1, 'tickcolor': theme_axis_color, 'tickfont': {'color': theme_axis_color}},
+                    'axis': {'range': [None, 120], 'tickwidth': 1},
                     'bar': {'color': "#D4AF37", 'thickness': 0.75},
                     'bgcolor': "rgba(0,0,0,0)",
                     'borderwidth': 2,
@@ -937,12 +868,11 @@ if submitted:
 
             fig.update_layout(
                 paper_bgcolor="rgba(0,0,0,0)",
-                plot_bgcolor="rgba(0,0,0,0)",
                 height=350,
                 margin=dict(l=20, r=20, t=50, b=20)
             )
 
-            st.plotly_chart(fig, use_container_width=True, theme=chart_theme)
+            st.plotly_chart(fig, use_container_width=True, theme="streamlit")
 
             if sports_bonus_applied:
                 st.caption(T["sports_bonus_caption"].format(sports_weight=sports_weight, cat_letter=cat_letter))

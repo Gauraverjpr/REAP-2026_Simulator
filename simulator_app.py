@@ -151,7 +151,7 @@ T = {
         "exclusively in the Working Professionals list (`mwp`). No other state or horizontal reservations apply."
     ) if not is_hindi else (
         "🛑 **कार्यरत पेशेवर (WORKING PROFESSIONAL) विशेष पूल**\n\nअभ्यर्थी को मुख्य प्रवेश पूल से हटा दिया जाता है और विशेष रूप से "
-        "कार्यरत पेशेवर सूची (`mwp`) में रखा जाता है। कोई अन्य राज्य या क्षैतिज आरक्षण लागू नहीं বোর্  होता है।"
+        "कार्यरत पेशेवर सूची (`mwp`) में रखा जाता है। कोई अन्य राज्य या क्षैतिज आरक्षण लागू नहीं होता है।"
     ),
     "fn_exclusive_error": (
         "🛑 **FOREIGN NATIONAL / GULF EXCLUSIVE POOL**\n\nCandidate is placed exclusively in the Foreign National list (`mfn`). "
@@ -488,7 +488,8 @@ with st.expander(T["step1_title"], expanded=True):
     with c1:
         name = st.text_input(T["cand_name"], "")
     with c2:
-        dob = st.date_input(T["dob"], datetime(2005, 1, 1), help=T["dob_help"])
+        # --- FIX: ADDED MIN AND MAX VALUES TO DATE INPUT (Goes back to 1970) ---
+        dob = st.date_input(T["dob"], value=datetime(2005, 1, 1), min_value=datetime(1970, 1, 1), max_value=datetime.today(), help=T["dob_help"])
     with c3:
         perc_10th = st.number_input(T["perc_10th"], min_value=0.0, max_value=100.0, value=80.0, step=0.1, help=T["perc_10th_help"])
 

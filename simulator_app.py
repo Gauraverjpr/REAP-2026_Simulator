@@ -290,20 +290,29 @@ logo_html = f'<img src="data:image/png;base64,{logo_base64}" class="header-logo"
 st.markdown(f"""
 <style>
     .official-header {{
-        background: linear-gradient(135deg, #112240 0%, #0A192F 100%);
+        background: linear-gradient(135deg, #FFFFFF 0%, #F3F4F6 100%);
         padding: 20px 30px;
         border-radius: 12px;
         border-bottom: 4px solid #D4AF37; 
+        border-top: 1px solid #E5E7EB;
+        border-left: 1px solid #E5E7EB;
+        border-right: 1px solid #E5E7EB;
         display: flex;
         align-items: center; 
         justify-content: flex-start; 
         margin-bottom: 20px;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }}
-    .header-logo {{ height: 100px; margin-right: 30px; }}
+    .header-logo {{ 
+        height: 100px; 
+        width: 100px;
+        margin-right: 40px; 
+        border-radius: 50%; 
+        object-fit: contain;
+    }}
     .header-text {{ display: flex; flex-direction: column; justify-content: center; }}
-    .header-text h1 {{ font-family: 'Georgia', serif; font-weight: 800; margin: 0; margin-bottom: 5px; font-size: 2.6rem; color: #FFFFFF; line-height: 1.1; }}
-    .header-text p {{ margin: 0; font-size: 1.1rem; letter-spacing: 1px; color: #e2e8f0; }}
+    .header-text h1 {{ font-family: 'Georgia', serif; font-weight: 800; margin: 0; margin-bottom: 5px; font-size: 2.6rem; color: #0A192F; line-height: 1.1; }}
+    .header-text p {{ margin: 0; font-size: 1.1rem; letter-spacing: 1px; color: #4B5563; font-weight: 600; }}
     .highlight {{ color: #D4AF37; }}
     .stButton > button[kind="secondary"]:hover {{
         border-color: #EF4444; 

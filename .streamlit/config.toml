@@ -1,6 +1,3 @@
 [theme]
-primaryColor = "#D4AF37"              # Official Gold for accents, buttons, and sliders
-backgroundColor = "#0A192F"           # Deep Navy main background
-secondaryBackgroundColor = "#112240"  # Slightly lighter Navy for expanders/inputs
-textColor = "#FFFFFF"                 # Pure white text for high contrast
-font = "sans serif"
+base = "light"
+primaryColor = "#D4AF37"

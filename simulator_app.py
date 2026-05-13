@@ -79,7 +79,7 @@ T = {
     "subject_12_caption": (
         "📌 **Note:** Choose 3 distinct mandatory subjects. If your stream is strictly Agriculture, select **'Agriculture Stream'** as Subject 1 (Subjects 2 and 3 will be locked automatically)."
     ) if not is_hindi else (
-        "📌 **नोट:** 3 अलग-अलग अनिवार्य विषयों का चयन करें। यदि आपकी स्ट्रीम केवल कृषि (Agriculture) है, तो विषय 1 के रूप में **'Agriculture Stream'** चुनें (विषय 2 और विषय 3 स्वतः ही लॉक বাতাসে जाएंगे)।"
+        "📌 **नोट:** 3 अलग-अलग अनिवार्य विषयों का चयन करें। यदि आपकी स्ट्रीम केवल कृषि (Agriculture) है, तो विषय 1 के रूप में **'Agriculture Stream'** चुनें (विषय 2 और विषय 3 स्वतः ही लॉक हो जाएंगे)।"
     ),
     "sub1_label": "Subject 1" if not is_hindi else "विषय 1",
     "sub2_label": "Subject 2" if not is_hindi else "विषय 2",
@@ -151,7 +151,7 @@ T = {
         "exclusively in the Working Professionals list (`mwp`). No other state or horizontal reservations apply."
     ) if not is_hindi else (
         "🛑 **कार्यरत पेशेवर (WORKING PROFESSIONAL) विशेष पूल**\n\nअभ्यर्थी को मुख्य प्रवेश पूल से हटा दिया जाता है और विशेष रूप से "
-        "कार्यरत पेशेवर सूची (`mwp`) में रखा जाता है। कोई अन्य राज्य या क्षैतिज आरक्षण लागू नहीं होता है।"
+        "कार्यरत पेशेवर सूची (`mwp`) में रखा जाता है। कोई अन्य राज्य या क्षैतिज आरक्षण लागू नहीं বোর্  होता है।"
     ),
     "fn_exclusive_error": (
         "🛑 **FOREIGN NATIONAL / GULF EXCLUSIVE POOL**\n\nCandidate is placed exclusively in the Foreign National list (`mfn`). "

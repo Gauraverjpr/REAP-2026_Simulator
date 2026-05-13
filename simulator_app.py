@@ -60,8 +60,8 @@ if selected_theme == "Dark":
         [data-testid="stExpander"] p { color: #FAFAFA !important; }
         
         /* Button */
-        .stButton > button { background-color: #262730 !important; color: #FAFAFA !important; border-color: #4B4B4B !important; }
-        .stButton > button:hover { border-color: #D4AF37 !important; color: #D4AF37 !important; }
+        .stButton > button, [data-testid="stDownloadButton"] > button { background-color: #262730 !important; color: #FAFAFA !important; border-color: #4B4B4B !important; }
+        .stButton > button:hover, [data-testid="stDownloadButton"] > button:hover { border-color: #D4AF37 !important; color: #D4AF37 !important; }
         
         /* Keep our custom header intact */
         .header-text p { color: #e2e8f0 !important; }
@@ -82,34 +82,39 @@ else:
         /* 3. Input Widgets (Force Light) */
         .stTextInput input, .stNumberInput input { background-color: #FFFFFF !important; color: #31333F !important; border-color: #D1D5DB !important; }
         
-        /* Dropdowns */
-        [data-baseweb="select"] > div { background-color: #FFFFFF !important; color: #31333F !important; border-color: #D1D5DB !important; }
-        [data-baseweb="popover"] { background-color: #FFFFFF !important; border: 1px solid #D1D5DB !important; }
+        /* Dropdowns & Calendars (Targeting global popovers outside main container) */
+        div[data-baseweb="select"] > div { background-color: #FFFFFF !important; color: #31333F !important; border-color: #D1D5DB !important; }
+        div[data-baseweb="popover"], div[data-baseweb="popover"] > div { background-color: #FFFFFF !important; border-color: #D1D5DB !important; }
+        div[data-baseweb="popover"] * { color: #31333F !important; }
         ul[role="listbox"] li { background-color: #FFFFFF !important; color: #31333F !important; }
-        ul[role="listbox"] li:hover, ul[role="listbox"] li[aria-selected="true"] { background-color: #E5E7EB !important; color: #112240 !important; }
+        ul[role="listbox"] li:hover, ul[role="listbox"] li[aria-selected="true"] { background-color: #112240 !important; color: #FFFFFF !important; }
+        div[data-baseweb="calendar"] [aria-selected="true"] { background-color: #112240 !important; color: #FFFFFF !important; }
         
-        /* 4. SVGs & Icons (Expander arrows, calendar, +/- buttons) */
+        /* 4. SVGs & Icons (+/- buttons, calendar icon) */
         svg { fill: #31333F !important; color: #31333F !important; }
         [data-testid="stNumberInputStepUp"], [data-testid="stNumberInputStepDown"] { background-color: #F3F4F6 !important; }
         
         /* 5. Checkboxes (Kill the default blue) */
-        [data-baseweb="checkbox"] > div:first-child { background-color: #FFFFFF !important; border-color: #31333F !important; }
+        div[data-baseweb="checkbox"] > div:first-child { background-color: #FFFFFF !important; border: 1px solid #D1D5DB !important; }
         div[data-baseweb="checkbox"] input:checked + div { background-color: #112240 !important; border-color: #112240 !important; }
-        div[data-baseweb="checkbox"] input:checked + div svg { fill: #FFFFFF !important; } /* White checkmark */
+        div[data-baseweb="checkbox"] input:checked + div svg { fill: #FFFFFF !important; stroke: #FFFFFF !important; color: #FFFFFF !important; }
 
-        /* 6. Expanders */
-        [data-testid="stExpander"] { background-color: #F9FAFB !important; border-color: #D1D5DB !important; }
+        /* 6. Expanders and arrows */
+        [data-testid="stExpander"] { background-color: #F9FAFB !important; border: 1px solid #D1D5DB !important; }
         [data-testid="stExpander"] details summary { background-color: #F3F4F6 !important; }
         [data-testid="stExpander"] details summary:hover { background-color: #E5E7EB !important; }
+        [data-testid="stExpander"] details summary svg { fill: #31333F !important; color: #31333F !important; }
         
         /* 7. Buttons & Links (Kill the blue hyperlinks) */
-        .stButton > button { background-color: #F9FAFB !important; color: #112240 !important; border-color: #D1D5DB !important; }
-        .stButton > button:hover { border-color: #112240 !important; }
+        .stButton > button, [data-testid="stDownloadButton"] > button { background-color: #FFFFFF !important; color: #112240 !important; border: 1px solid #112240 !important; }
+        .stButton > button:hover, [data-testid="stDownloadButton"] > button:hover { background-color: #F3F4F6 !important; border-color: #112240 !important; }
+        .stButton > button *, [data-testid="stDownloadButton"] > button * { color: #112240 !important; }
         a { color: #112240 !important; font-weight: bold !important; text-decoration: underline !important; }
         
         /* 8. Toasts / Notifications */
-        [data-testid="stToast"] { background-color: #FFFFFF !important; border: 1px solid #D1D5DB !important; box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important; }
-        [data-testid="stToast"] div, [data-testid="stToast"] span, [data-testid="stToast"] p { color: #112240 !important; }
+        div[data-testid="stToast"] { background-color: #FFFFFF !important; border: 2px solid #112240 !important; box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important; }
+        div[data-testid="stToast"] *, div[data-testid="stToast"] p { color: #112240 !important; font-weight: 600 !important; }
+        div[data-testid="stToast"] svg { fill: #10B981 !important; color: #10B981 !important; } /* Green Checkmark */
 
         /* 9. Keep Header Intact */
         .official-header p, .official-header h1, .official-header span { color: #FFFFFF !important; }
@@ -933,7 +938,9 @@ if submitted:
                 st.info(T["pdf_install_helper"])
 
         with dash_col2:
-            # FIX: Explicitly set the number font color to the theme axis color
+            # FIX: Only use Streamlit's native Plotly theme if the user explicitly wants Dark Mode
+            chart_theme = "streamlit" if selected_theme == "Dark" else None
+            
             fig = go.Figure(go.Indicator(
                 mode="gauge+number+delta",
                 value=effective_score,
@@ -964,7 +971,7 @@ if submitted:
                 margin=dict(l=20, r=20, t=50, b=20)
             )
 
-            st.plotly_chart(fig, use_container_width=True, theme="streamlit")
+            st.plotly_chart(fig, use_container_width=True, theme=chart_theme)
 
             if sports_bonus_applied:
                 st.caption(T["sports_bonus_caption"].format(sports_weight=sports_weight, cat_letter=cat_letter))

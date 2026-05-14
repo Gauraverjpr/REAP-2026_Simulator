@@ -16,8 +16,17 @@ except ImportError:
 # --- 1. UI CONFIGURATION & THEME ---
 st.set_page_config(page_title="REAP-2026 Eligibility Simulator", page_icon="🏛️", layout="wide")
 
-# Columns for Language Selection at the top right
-col_hdr, col_lang = st.columns([5, 1.2])
+# Columns for Theme and Language Selection at the top right
+col_hdr, col_theme, col_lang = st.columns([3.8, 1.2, 1.2])
+
+with col_theme:
+    selected_theme = st.selectbox(
+        "🌗 Theme / थीम",
+        ["Light", "Dark"],
+        index=0,
+        help="Switch display theme / डिस्प्ले थीम बदलें"
+    )
+
 with col_lang:
     selected_language = st.selectbox(
         "🌐 Language / भाषा चुनें",
@@ -27,6 +36,60 @@ with col_lang:
     )
 
 is_hindi = (selected_language == "हिन्दी (Hindi)")
+
+# --- DYNAMIC THEME ENGINE ---
+if selected_theme == "Dark":
+    theme_axis_color = "#FFFFFF"
+    chart_theme = "streamlit"
+    
+    # Inject your custom Navy/Gold Theme explicitly for Dark Mode
+    st.markdown("""
+    <style>
+        /* App Background */
+        .stApp, .main, .block-container { background-color: #0A192F !important; color: #FFFFFF !important; }
+        
+        /* Typography */
+        h1, h2, h3, h4, h5, h6, p, label, span, .stMarkdown, .stText { color: #FFFFFF !important; }
+        
+        /* Inputs & Dropdowns */
+        .stTextInput input, .stNumberInput input, .stDateInput input { background-color: #112240 !important; color: #FFFFFF !important; border: 1px solid #112240 !important; }
+        div[data-baseweb="select"] > div { background-color: #112240 !important; color: #FFFFFF !important; border-color: #112240 !important; }
+        
+        /* React Portals (Popovers & Calendars) */
+        div[data-baseweb="popover"], div[data-baseweb="popover"] > div, ul[role="listbox"] { background-color: #112240 !important; border-color: #112240 !important; }
+        ul[role="listbox"] li { background-color: #112240 !important; color: #FFFFFF !important; }
+        ul[role="listbox"] li:hover, ul[role="listbox"] li[aria-selected="true"] { background-color: #D4AF37 !important; color: #0A192F !important; }
+        
+        div[data-baseweb="calendar"], div[data-baseweb="calendar"] * { background-color: #112240 !important; color: #FFFFFF !important; }
+        div[data-baseweb="calendar"] [aria-selected="true"], div[data-baseweb="calendar"] [aria-selected="true"] * { background-color: #D4AF37 !important; color: #0A192F !important; }
+        
+        /* Expanders */
+        [data-testid="stExpander"] { background-color: #0A192F !important; border: 1px solid #112240 !important; }
+        [data-testid="stExpander"] details summary { background-color: #112240 !important; }
+        [data-testid="stExpander"] details summary svg { fill: #FFFFFF !important; }
+        
+        /* Checkboxes */
+        div[data-baseweb="checkbox"] > div:first-child { background-color: #112240 !important; border: 1px solid #D4AF37 !important; }
+        div[data-baseweb="checkbox"] input:checked + div { background-color: #D4AF37 !important; border-color: #D4AF37 !important; }
+        div[data-baseweb="checkbox"] input:checked + div svg { fill: #0A192F !important; }
+        
+        /* Buttons & Toasts */
+        .stButton > button, [data-testid="stDownloadButton"] > button { background-color: #112240 !important; color: #FFFFFF !important; border: 1px solid #D4AF37 !important; }
+        .stButton > button:hover, [data-testid="stDownloadButton"] > button:hover { background-color: #D4AF37 !important; color: #0A192F !important; }
+        .stButton > button:hover *, [data-testid="stDownloadButton"] > button:hover * { color: #0A192F !important; }
+        div[data-testid="stToast"] { background-color: #112240 !important; border: 1px solid #D4AF37 !important; }
+        div[data-testid="stToast"] * { color: #FFFFFF !important; }
+        
+        /* SVGs */
+        svg { fill: #FFFFFF; }
+    </style>
+    """, unsafe_allow_html=True)
+else:
+    # --- ZERO CSS FOR LIGHT MODE ---
+    # With your new config.toml (base="light"), Streamlit handles this flawlessly.
+    theme_axis_color = "#31333F"
+    chart_theme = None
+
 
 # --- 2. TRANSLATION DICTIONARY (BILINGUAL ENGINE) ---
 T = {
@@ -311,12 +374,12 @@ st.markdown(f"""
         object-fit: contain;
     }}
     .header-text {{ display: flex; flex-direction: column; justify-content: center; }}
-    .header-text h1 {{ font-family: 'Georgia', serif; font-weight: 800; margin: 0; margin-bottom: 5px; font-size: 2.6rem; color: #0A192F; line-height: 1.1; }}
-    .header-text p {{ margin: 0; font-size: 1.1rem; letter-spacing: 1px; color: #4B5563; font-weight: 600; }}
-    .highlight {{ color: #D4AF37; }}
+    .header-text h1 {{ font-family: 'Georgia', serif; font-weight: 800; margin: 0; margin-bottom: 5px; font-size: 2.6rem; color: #0A192F !important; line-height: 1.1; }}
+    .header-text p {{ margin: 0; font-size: 1.1rem; letter-spacing: 1px; color: #4B5563 !important; font-weight: 600; }}
+    .highlight {{ color: #D4AF37 !important; }}
     .stButton > button[kind="secondary"]:hover {{
-        border-color: #EF4444; 
-        color: #EF4444; 
+        border-color: #EF4444 !important; 
+        color: #EF4444 !important; 
     }}
 </style>
 <div class="official-header">
@@ -497,9 +560,10 @@ with st.expander(T["step1_title"], expanded=True):
     with c1:
         name = st.text_input(T["cand_name"], "")
     with c2:
-        # --- FIX: ADDED MIN AND MAX VALUES TO DATE INPUT (Goes back to 1970) ---
+        # DOB fix with min_value out to 1970
         dob = st.date_input(T["dob"], value=datetime(2005, 1, 1), min_value=datetime(1970, 1, 1), max_value=datetime.today(), help=T["dob_help"])
     with c3:
+        # Removed the help tooltip parameter from 10th %
         perc_10th = st.number_input(T["perc_10th"], min_value=0.0, max_value=100.0, value=80.0, step=0.1)
 
     st.markdown("---")
@@ -856,10 +920,11 @@ if submitted:
                 mode="gauge+number+delta",
                 value=effective_score,
                 domain={'x': [0, 1], 'y': [0, 1]},
-                title={'text': T["eff_academic_score"], 'font': {'size': 22}},
+                title={'text': T["eff_academic_score"], 'font': {'size': 22, 'color': theme_axis_color}},
+                number={'font': {'color': theme_axis_color}},
                 delta={'reference': base_score, 'increasing': {'color': "#10B981"}, 'position': "top"},
                 gauge={
-                    'axis': {'range': [None, 120], 'tickwidth': 1},
+                    'axis': {'range': [None, 120], 'tickwidth': 1, 'tickcolor': theme_axis_color, 'tickfont': {'color': theme_axis_color}},
                     'bar': {'color': "#D4AF37", 'thickness': 0.75},
                     'bgcolor': "rgba(0,0,0,0)",
                     'borderwidth': 2,
@@ -875,13 +940,16 @@ if submitted:
                 }
             ))
 
+            # Updated Top Margin (t=80) to fix the clipped title
             fig.update_layout(
                 paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
                 height=350,
-                margin=dict(l=20, r=20, t=50, b=20)
+                margin=dict(l=20, r=20, t=80, b=20),
+                font=dict(color=theme_axis_color)
             )
 
-            st.plotly_chart(fig, use_container_width=True, theme="streamlit")
+            st.plotly_chart(fig, use_container_width=True, theme=chart_theme)
 
             if sports_bonus_applied:
                 st.caption(T["sports_bonus_caption"].format(sports_weight=sports_weight, cat_letter=cat_letter))

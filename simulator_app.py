@@ -500,7 +500,7 @@ with st.expander(T["step1_title"], expanded=True):
         # --- FIX: ADDED MIN AND MAX VALUES TO DATE INPUT (Goes back to 1970) ---
         dob = st.date_input(T["dob"], value=datetime(2005, 1, 1), min_value=datetime(1970, 1, 1), max_value=datetime.today(), help=T["dob_help"])
     with c3:
-        perc_10th = st.number_input(T["perc_10th"], min_value=0.0, max_value=100.0, value=80.0, step=0.1, help=T["perc_10th_help"])
+        perc_10th = st.number_input(T["perc_10th"], min_value=0.0, max_value=100.0, value=80.0, step=0.1)
 
     st.markdown("---")
     

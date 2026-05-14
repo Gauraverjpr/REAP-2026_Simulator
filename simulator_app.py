@@ -16,17 +16,8 @@ except ImportError:
 # --- 1. UI CONFIGURATION & THEME ---
 st.set_page_config(page_title="REAP-2026 Eligibility Simulator", page_icon="🏛️", layout="wide")
 
-# Columns for Theme and Language Selection at the top right
-col_hdr, col_theme, col_lang = st.columns([3.8, 1.2, 1.2])
-
-with col_theme:
-    selected_theme = st.selectbox(
-        "🌗 Theme / थीम",
-        ["Light", "Dark"],
-        index=0,
-        help="Switch display theme / डिस्प्ले थीम बदलें"
-    )
-
+# Columns for Language Selection at the top right
+col_hdr, col_lang = st.columns([5, 1.2])
 with col_lang:
     selected_language = st.selectbox(
         "🌐 Language / भाषा चुनें",
@@ -37,58 +28,9 @@ with col_lang:
 
 is_hindi = (selected_language == "हिन्दी (Hindi)")
 
-# --- DYNAMIC THEME ENGINE ---
-if selected_theme == "Dark":
-    theme_axis_color = "#FFFFFF"
-    chart_theme = "streamlit"
-    
-    # Inject your custom Navy/Gold Theme explicitly for Dark Mode
-    st.markdown("""
-    <style>
-        /* App Background */
-        .stApp, .main, .block-container { background-color: #0A192F !important; color: #FFFFFF !important; }
-        
-        /* Typography */
-        h1, h2, h3, h4, h5, h6, p, label, span, .stMarkdown, .stText { color: #FFFFFF !important; }
-        
-        /* Inputs & Dropdowns */
-        .stTextInput input, .stNumberInput input, .stDateInput input { background-color: #112240 !important; color: #FFFFFF !important; border: 1px solid #112240 !important; }
-        div[data-baseweb="select"] > div { background-color: #112240 !important; color: #FFFFFF !important; border-color: #112240 !important; }
-        
-        /* React Portals (Popovers & Calendars) */
-        div[data-baseweb="popover"], div[data-baseweb="popover"] > div, ul[role="listbox"] { background-color: #112240 !important; border-color: #112240 !important; }
-        ul[role="listbox"] li { background-color: #112240 !important; color: #FFFFFF !important; }
-        ul[role="listbox"] li:hover, ul[role="listbox"] li[aria-selected="true"] { background-color: #D4AF37 !important; color: #0A192F !important; }
-        
-        div[data-baseweb="calendar"], div[data-baseweb="calendar"] * { background-color: #112240 !important; color: #FFFFFF !important; }
-        div[data-baseweb="calendar"] [aria-selected="true"], div[data-baseweb="calendar"] [aria-selected="true"] * { background-color: #D4AF37 !important; color: #0A192F !important; }
-        
-        /* Expanders */
-        [data-testid="stExpander"] { background-color: #0A192F !important; border: 1px solid #112240 !important; }
-        [data-testid="stExpander"] details summary { background-color: #112240 !important; }
-        [data-testid="stExpander"] details summary svg { fill: #FFFFFF !important; }
-        
-        /* Checkboxes */
-        div[data-baseweb="checkbox"] > div:first-child { background-color: #112240 !important; border: 1px solid #D4AF37 !important; }
-        div[data-baseweb="checkbox"] input:checked + div { background-color: #D4AF37 !important; border-color: #D4AF37 !important; }
-        div[data-baseweb="checkbox"] input:checked + div svg { fill: #0A192F !important; }
-        
-        /* Buttons & Toasts */
-        .stButton > button, [data-testid="stDownloadButton"] > button { background-color: #112240 !important; color: #FFFFFF !important; border: 1px solid #D4AF37 !important; }
-        .stButton > button:hover, [data-testid="stDownloadButton"] > button:hover { background-color: #D4AF37 !important; color: #0A192F !important; }
-        .stButton > button:hover *, [data-testid="stDownloadButton"] > button:hover * { color: #0A192F !important; }
-        div[data-testid="stToast"] { background-color: #112240 !important; border: 1px solid #D4AF37 !important; }
-        div[data-testid="stToast"] * { color: #FFFFFF !important; }
-        
-        /* SVGs */
-        svg { fill: #FFFFFF; }
-    </style>
-    """, unsafe_allow_html=True)
-else:
-    # --- ZERO CSS FOR LIGHT MODE ---
-    # With your new config.toml (base="light"), Streamlit handles this flawlessly.
-    theme_axis_color = "#31333F"
-    chart_theme = None
+# Hardcoded Theme Variables for Light Mode Default
+theme_axis_color = "#31333F"
+chart_theme = None
 
 
 # --- 2. TRANSLATION DICTIONARY (BILINGUAL ENGINE) ---
@@ -362,32 +304,31 @@ st.markdown(f"""
         border-right: 1px solid #E5E7EB;
         display: flex;
         align-items: center; 
-        justify-content: flex-start; 
+        justify-content: space-between; 
         margin-bottom: 20px;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }}
-    .header-logo {{ 
-        height: 100px; 
-        width: 100px;
-        margin-right: 40px; 
-        border-radius: 50%; 
-        object-fit: contain;
     }}
     .header-text {{ display: flex; flex-direction: column; justify-content: center; }}
     .header-text h1 {{ font-family: 'Georgia', serif; font-weight: 800; margin: 0; margin-bottom: 5px; font-size: 2.6rem; color: #0A192F !important; line-height: 1.1; }}
     .header-text p {{ margin: 0; font-size: 1.1rem; letter-spacing: 1px; color: #4B5563 !important; font-weight: 600; }}
     .highlight {{ color: #D4AF37 !important; }}
+    .header-logo {{ 
+        height: 100px; 
+        width: 100px;
+        border-radius: 50%; 
+        object-fit: contain;
+    }}
     .stButton > button[kind="secondary"]:hover {{
         border-color: #EF4444 !important; 
         color: #EF4444 !important; 
     }}
 </style>
 <div class="official-header">
-    {logo_html}
     <div class="header-text">
         <h1>{T["app_title"]} <span class="highlight">2026</span></h1>
         <p>{T["app_subtitle"]}</p>
     </div>
+    {logo_html}
 </div>
 """, unsafe_allow_html=True)
 
@@ -548,7 +489,6 @@ def generate_pdf_report(data):
         "    the actual REAP-2026 Centralized Admission Process after thorough verification of original documents."
     ), align='L')
     
-    # --- CRITICAL FIX: Convert bytearray to standard bytes for Streamlit ---
     return bytes(pdf.output())
 
 
@@ -560,10 +500,8 @@ with st.expander(T["step1_title"], expanded=True):
     with c1:
         name = st.text_input(T["cand_name"], "")
     with c2:
-        # DOB fix with min_value out to 1970
         dob = st.date_input(T["dob"], value=datetime(2005, 1, 1), min_value=datetime(1970, 1, 1), max_value=datetime.today(), help=T["dob_help"])
     with c3:
-        # Removed the help tooltip parameter from 10th %
         perc_10th = st.number_input(T["perc_10th"], min_value=0.0, max_value=100.0, value=80.0, step=0.1)
 
     st.markdown("---")
@@ -940,7 +878,6 @@ if submitted:
                 }
             ))
 
-            # Updated Top Margin (t=80) to fix the clipped title
             fig.update_layout(
                 paper_bgcolor="rgba(0,0,0,0)",
                 plot_bgcolor="rgba(0,0,0,0)",

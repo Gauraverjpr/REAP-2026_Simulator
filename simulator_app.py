@@ -100,6 +100,8 @@ T = {
     "domicile": "Domicile" if not is_hindi else "मूल निवास (Domicile)",
     "domicile_help": "Non-Rajasthan candidates are strictly processed as UR/GEN with NO horizontal reservations and are only eligible for Self Financed Seats (SFS)." if not is_hindi else "गैर-राजस्थान अभ्यर्थियों को बिना किसी क्षैतिज आरक्षण के कड़ाई से UR/GEN के रूप में माना जाता है और वे केवल स्व-वित्तपोषित सीटों (SFS) के लिए पात्र हैं।",
     "step3_title": "⭐ Step 3: Supernumerary and Other Quotas" if not is_hindi else "⭐ चरण 3: अधिसंख्य (Supernumerary) और अन्य कोटा",
+    "exclusive_quotas_header": "🛑 Exclusive Supernumerary Quotas" if not is_hindi else "🛑 विशेष अधिसंख्य कोटा (Exclusive Quotas)",
+    "standard_quotas_header": "Other Quotas & Reservations" if not is_hindi else "अन्य कोटा और आरक्षण",
     "pwd_label": "Person with Special Ability (PwD)" if not is_hindi else "विशेष योग्यजन (PwD)",
     "pwd_help": "Grants a 5% horizontal reservation (Rajasthan Domicile Only)." if not is_hindi else "5% क्षैतिज आरक्षण प्रदान करता है (केवल राजस्थान मूल निवासी)।",
     "tfws_label": "Income < ₹8.00 Lakhs (TFWS)" if not is_hindi else "आय < ₹8.00 लाख (TFWS)",
@@ -171,6 +173,10 @@ T = {
         "मास्टर टाई-ब्रेकर लॉजिक के आधार पर, उम्मीदवार को निम्नलिखित अनुक्रमों (पूल) में स्थान दिया जाएगा:"
     ),
     "eff_academic_score": "Effective Academic Score" if not is_hindi else "प्रभावी शैक्षणिक अंक",
+    "based_on_jee": "(Based on JEE Mains)" if not is_hindi else "(जेईई मेन्स पर आधारित)",
+    "based_on_12th": "(Based on 12th Board)" if not is_hindi else "(12वीं बोर्ड पर आधारित)",
+    "based_on_diploma": "(Based on Diploma)" if not is_hindi else "(डिप्लोमा पर आधारित)",
+    "based_on_dvoc": "(Based on D.Voc)" if not is_hindi else "(D.Voc पर आधारित)",
     "sports_bonus_caption": "✨ Score includes **+{sports_weight} points** for Sports Quota Category {cat_letter}." if not is_hindi else "✨ स्कोर में स्पोर्ट्स कोटा श्रेणी {cat_letter} के लिए **+{sports_weight} अंक** शामिल हैं।",
     "pure_academic_caption": "Score based purely on academic priority tier." if not is_hindi else "विशुद्ध रूप से शैक्षणिक प्राथमिकता स्तर पर आधारित स्कोर।",
     "download_report_btn": "📥 Download Official Eligibility Report (PDF)" if not is_hindi else "📥 आधिकारिक पात्रता रिपोर्ट डाउनलोड करें (PDF)",
@@ -574,20 +580,31 @@ with st.expander(T["step2_title"], expanded=True):
         domicile = domicile_map[sel_domicile]
 
 with st.expander(T["step3_title"], expanded=False):
+    # Exclusive Quotas Block
+    st.markdown(f"##### {T['exclusive_quotas_header']}")
+    c_ex1, c_ex2 = st.columns(2)
+    with c_ex1:
+        wp_quota = st.checkbox(T["wp_label"], help=T["wp_help"])
+    with c_ex2:
+        fn_quota = st.checkbox(T["fn_label"], help=T["fn_help"], disabled=wp_quota) # Disable if WP is checked
+        
+    is_exclusive = wp_quota or fn_quota
+    
+    st.markdown("---")
+    st.markdown(f"##### {T['standard_quotas_header']}")
+    
     c5, c6 = st.columns(2)
     with c5:
-        pwd_quota = st.checkbox(T["pwd_label"], help=T["pwd_help"])
-        income_less_8l = st.checkbox(T["tfws_label"], help=T["tfws_help"])
-        km_quota = st.checkbox(T["km_label"], help=T["km_help"])
-        wp_quota = st.checkbox(T["wp_label"], help=T["wp_help"])
-        fn_quota = st.checkbox(T["fn_label"], help=T["fn_help"])
+        pwd_quota = st.checkbox(T["pwd_label"], help=T["pwd_help"], disabled=is_exclusive)
+        income_less_8l = st.checkbox(T["tfws_label"], help=T["tfws_help"], disabled=is_exclusive)
+        km_quota = st.checkbox(T["km_label"], help=T["km_help"], disabled=is_exclusive)
     with c6:
-        sel_exs = st.selectbox(T["exs_label"], exs_options, help=T["exs_help"])
-        exs_priority = exs_map[sel_exs]
+        sel_exs = st.selectbox(T["exs_label"], exs_options, help=T["exs_help"], disabled=is_exclusive)
+        exs_priority = exs_map[sel_exs] if not is_exclusive else "None"
 
-        sports_quota = st.checkbox(T["sports_label"], help=T["sports_cat_help"])
-        sel_sports_cat = st.selectbox(T["sports_cat_label"], sports_cat_options, help=T["sports_cat_help"])
-        sports_cat = sports_cat_map[sel_sports_cat]
+        sports_quota = st.checkbox(T["sports_label"], help=T["sports_cat_help"], disabled=is_exclusive)
+        sel_sports_cat = st.selectbox(T["sports_cat_label"], sports_cat_options, help=T["sports_cat_help"], disabled=(is_exclusive or not sports_quota))
+        sports_cat = sports_cat_map[sel_sports_cat] if not is_exclusive else "None"
 
 st.markdown("<br>", unsafe_allow_html=True)
 submit_btn_col1, submit_btn_col2, submit_btn_col3 = st.columns([1, 1, 1])
@@ -854,11 +871,25 @@ if submitted:
                 st.info(T["pdf_install_helper"])
 
         with dash_col2:
+            # Determine correct dynamic subtitle for the Gauge
+            if jee_basis:
+                gauge_suffix = T["based_on_jee"]
+            elif qual_exam == "12th Board":
+                gauge_suffix = T["based_on_12th"]
+            elif qual_exam == "Diploma":
+                gauge_suffix = T["based_on_diploma"]
+            elif qual_exam == "D.Voc":
+                gauge_suffix = T["based_on_dvoc"]
+            else:
+                gauge_suffix = ""
+
+            gauge_full_title = f"{T['eff_academic_score']}<br><span style='font-size:14px;color:#6B7280'>{gauge_suffix}</span>"
+
             fig = go.Figure(go.Indicator(
                 mode="gauge+number+delta",
                 value=effective_score,
                 domain={'x': [0, 1], 'y': [0, 1]},
-                title={'text': T["eff_academic_score"], 'font': {'size': 22, 'color': theme_axis_color}},
+                title={'text': gauge_full_title, 'font': {'size': 22, 'color': theme_axis_color}},
                 number={'font': {'color': theme_axis_color}},
                 delta={'reference': base_score, 'increasing': {'color': "#10B981"}, 'position': "top"},
                 gauge={
@@ -882,7 +913,7 @@ if submitted:
                 paper_bgcolor="rgba(0,0,0,0)",
                 plot_bgcolor="rgba(0,0,0,0)",
                 height=350,
-                margin=dict(l=20, r=20, t=80, b=20),
+                margin=dict(l=20, r=20, t=110, b=20), # Increased top margin to 110 to support the new subtitle!
                 font=dict(color=theme_axis_color)
             )
 

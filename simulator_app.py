@@ -100,8 +100,6 @@ T = {
     "domicile": "Domicile" if not is_hindi else "मूल निवास (Domicile)",
     "domicile_help": "Non-Rajasthan candidates are strictly processed as UR/GEN with NO horizontal reservations and are only eligible for Self Financed Seats (SFS)." if not is_hindi else "गैर-राजस्थान अभ्यर्थियों को बिना किसी क्षैतिज आरक्षण के कड़ाई से UR/GEN के रूप में माना जाता है और वे केवल स्व-वित्तपोषित सीटों (SFS) के लिए पात्र हैं।",
     "step3_title": "⭐ Step 3: Supernumerary and Other Quotas" if not is_hindi else "⭐ चरण 3: अधिसंख्य (Supernumerary) और अन्य कोटा",
-    "exclusive_quotas_header": "🛑 Exclusive Supernumerary Quotas" if not is_hindi else "🛑 विशेष अधिसंख्य कोटा (Exclusive Quotas)",
-    "standard_quotas_header": "Other Quotas & Reservations" if not is_hindi else "अन्य कोटा और आरक्षण",
     "pwd_label": "Person with Special Ability (PwD)" if not is_hindi else "विशेष योग्यजन (PwD)",
     "pwd_help": "Grants a 5% horizontal reservation (Rajasthan Domicile Only)." if not is_hindi else "5% क्षैतिज आरक्षण प्रदान करता है (केवल राजस्थान मूल निवासी)।",
     "tfws_label": "Income < ₹8.00 Lakhs (TFWS)" if not is_hindi else "आय < ₹8.00 लाख (TFWS)",
@@ -580,21 +578,15 @@ with st.expander(T["step2_title"], expanded=True):
         domicile = domicile_map[sel_domicile]
 
 with st.expander(T["step3_title"], expanded=False):
-    # Exclusive Quotas Block
-    st.markdown(f"##### {T['exclusive_quotas_header']}")
-    c_ex1, c_ex2 = st.columns(2)
-    with c_ex1:
-        wp_quota = st.checkbox(T["wp_label"], help=T["wp_help"])
-    with c_ex2:
-        fn_quota = st.checkbox(T["fn_label"], help=T["fn_help"], disabled=wp_quota) # Disable if WP is checked
-        
-    is_exclusive = wp_quota or fn_quota
-    
-    st.markdown("---")
-    st.markdown(f"##### {T['standard_quotas_header']}")
-    
     c5, c6 = st.columns(2)
     with c5:
+        # Place Exclusive Quotas at the top so their state locks the options below them smoothly
+        wp_quota = st.checkbox(T["wp_label"], help=T["wp_help"])
+        fn_quota = st.checkbox(T["fn_label"], help=T["fn_help"], disabled=wp_quota) # Disable if WP is checked
+        
+        is_exclusive = wp_quota or fn_quota
+        
+        # Standard quotas follow, and are dynamically locked if an exclusive quota is selected above
         pwd_quota = st.checkbox(T["pwd_label"], help=T["pwd_help"], disabled=is_exclusive)
         income_less_8l = st.checkbox(T["tfws_label"], help=T["tfws_help"], disabled=is_exclusive)
         km_quota = st.checkbox(T["km_label"], help=T["km_help"], disabled=is_exclusive)
@@ -913,7 +905,7 @@ if submitted:
                 paper_bgcolor="rgba(0,0,0,0)",
                 plot_bgcolor="rgba(0,0,0,0)",
                 height=350,
-                margin=dict(l=20, r=20, t=110, b=20), # Increased top margin to 110 to support the new subtitle!
+                margin=dict(l=20, r=20, t=110, b=20),
                 font=dict(color=theme_axis_color)
             )
 

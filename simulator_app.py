@@ -68,9 +68,9 @@ T = {
         "जेईई (मेन्स) 2026 में प्राप्त रैंक। प्राथमिकता: JEE Mains के तहत मूल्यांकन। न्यूनतम 20 पर्सेंटाइल आवश्यक (डिप्लोमा/D.Voc के लिए लागू नहीं)।"
     ),
     "diploma_success": (
-        "✅ **Note:** As a Diploma holder, you are considered equivalent to PCM. You are eligible for **Group-1 (All Branches)** and evaluated under **Priority: Diploma**."
+        "✅ **Note:** As a Diploma holder, you are considered equivalent to PCM. You are eligible for **Group-1 (All Branches)** and evaluated under **Priority: Diploma (12th Equivalent)**."
     ) if not is_hindi else (
-        "✅ **नोट:** डिप्लोमा धारक के रूप में, आपको PCM के समकक्ष माना जाता है। आप **ग्रुप-1 (सभी शाखाओं)** के लिए पात्र हैं और **प्राथमिकता: Diploma** के तहत मूल्यांकन किया जाएगा।"
+        "✅ **नोट:** डिप्लोमा धारक के रूप में, आपको PCM के समकक्ष माना जाता है। आप **ग्रुप-1 (सभी शाखाओं)** के लिए पात्र हैं और **प्राथमिकता: Diploma (12th Equivalent)** के तहत मूल्यांकन किया जाएगा।"
     ),
     "diploma_pct": "Diploma (%)" if not is_hindi else "डिप्लोमा (%)",
     "dvoc_info": (
@@ -718,7 +718,7 @@ if submitted:
             academic_priority = "Priority: 12th Board"
             base_score = entered_perc
         elif qual_exam == "Diploma":
-            academic_priority = "Priority: Diploma"
+            academic_priority = "Priority: Diploma (12th Equivalent)"
             base_score = entered_perc
         elif qual_exam == "D.Voc":
             academic_priority = "Priority: D.Voc"
@@ -779,7 +779,7 @@ if submitted:
                 **Official Priority Sequence for REAP-2026 Admissions:**
                 * **Priority: Sports A:** Candidates under Sports Quota Category A.
                 * **Priority: JEE Mains:** Rank obtained in JEE (Mains) 2026 (Min 20 percentile).
-                * **Priority: 12th Board / Priority: Diploma:** Percentile obtained in Class 12th OR Percentage obtained in Diploma (Both are evaluated at the exact same tier).
+                * **Priority: 12th Board / Priority: Diploma (12th Equivalent):** Percentile obtained in Class 12th OR Percentage obtained in Diploma (Both are evaluated at the exact same tier).
                 * **Priority: D.Voc:** Percentage obtained in D.Voc.
                 """)
                 if os.path.exists("Priority_Rules.pdf"):

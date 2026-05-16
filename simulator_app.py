@@ -63,20 +63,20 @@ T = {
     "qual_basis": "Select Qualifying Basis" if not is_hindi else "पात्रता परीक्षा का आधार चुनें",
     "jee_score": "JEE Mains Percentile (0 if none)" if not is_hindi else "जेईई मेन्स पर्सेंटाइल (यदि कोई नहीं है तो 0 दर्ज करें)",
     "jee_help": (
-        "Rank obtained in JEE (Mains) 2026. Evaluated under Priority (JEE Mains). Requires a minimum of 20 percentile (Not applicable for Diploma/D.Voc)."
+        "Rank obtained in JEE (Mains) 2026. Evaluated under Priority: JEE Mains. Requires a minimum of 20 percentile (Not applicable for Diploma/D.Voc)."
     ) if not is_hindi else (
-        "जेईई (मेन्स) 2026 में प्राप्त रैंक। प्राथमिकता (JEE Mains) के तहत मूल्यांकन। न्यूनतम 20 पर्सेंटाइल आवश्यक (डिप्लोमा/D.Voc के लिए लागू नहीं)।"
+        "जेईई (मेन्स) 2026 में प्राप्त रैंक। प्राथमिकता: JEE Mains के तहत मूल्यांकन। न्यूनतम 20 पर्सेंटाइल आवश्यक (डिप्लोमा/D.Voc के लिए लागू नहीं)।"
     ),
     "diploma_success": (
-        "✅ **Note:** As a Diploma holder, you are considered equivalent to PCM. You are eligible for **Group-1 (All Branches)** and evaluated under **Priority (12th / Diploma)**."
+        "✅ **Note:** As a Diploma holder, you are considered equivalent to PCM. You are eligible for **Group-1 (All Branches)** and evaluated under **Priority: Diploma**."
     ) if not is_hindi else (
-        "✅ **नोट:** डिप्लोमा धारक के रूप में, आपको PCM के समकक्ष माना जाता है। आप **ग्रुप-1 (सभी शाखाओं)** के लिए पात्र हैं और **प्राथमिकता (12th / Diploma)** के तहत मूल्यांकन किया जाएगा।"
+        "✅ **नोट:** डिप्लोमा धारक के रूप में, आपको PCM के समकक्ष माना जाता है। आप **ग्रुप-1 (सभी शाखाओं)** के लिए पात्र हैं और **प्राथमिकता: Diploma** के तहत मूल्यांकन किया जाएगा।"
     ),
     "diploma_pct": "Diploma (%)" if not is_hindi else "डिप्लोमा (%)",
     "dvoc_info": (
-        "📌 **Note:** You are eligible for the relevant branch in which you have passed the D.Voc. Evaluated under **Priority (D.Voc)**."
+        "📌 **Note:** You are eligible for the relevant branch in which you have passed the D.Voc. Evaluated under **Priority: D.Voc**."
     ) if not is_hindi else (
-        "📌 **नोट:** आप उस प्रासंगिक शाखा के लिए पात्र हैं जिसमें आपने D.Voc उत्तीर्ण किया है। **प्राथमिकता (D.Voc)** के तहत मूल्यांकन किया जाएगा।"
+        "📌 **नोट:** आप उस प्रासंगिक शाखा के लिए पात्र हैं जिसमें आपने D.Voc उत्तीर्ण किया है। **प्राथमिकता: D.Voc** के तहत मूल्यांकन किया जाएगा।"
     ),
     "dvoc_pct": "D.Voc (%)" if not is_hindi else "D.Voc (%)",
     "cutoff_help": "Eligibility cutoff is 45% for GEN and 40% for Reserved categories." if not is_hindi else "पात्रता कटऑफ सामान्य (GEN) के लिए 45% और आरक्षित श्रेणियों के लिए 40% है।",
@@ -130,10 +130,10 @@ T = {
     "highest_eligible_delta": "Highest Eligible" if not is_hindi else "सर्वोच्च पात्र",
     "outofstate_delta": "Out-of-State Override" if not is_hindi else "आउट-ऑफ-स्टेट ओवरराइड",
     "sports_fallback_msg": (
-        "**Note:** Priority (Sports A) is capped at 5% of total course seats. If candidate does not secure a Sports A seat, "
+        "**Note:** Priority: Sports A is capped at 5% of total course seats. If candidate does not secure a Sports A seat, "
         "he/she will fall back to **{academic_priority}** with an Effective Academic Score of {effective_score:.2f}."
     ) if not is_hindi else (
-        "**नोट:** प्राथमिकता (Sports A) कुल कोर्स सीटों के 5% तक ही सीमित है। यदि अभ्यर्थी Sports A सीट प्राप्त नहीं कर पाता है, "
+        "**नोट:** प्राथमिकता: Sports A कुल कोर्स सीटों के 5% तक ही सीमित है। यदि अभ्यर्थी Sports A सीट प्राप्त नहीं कर पाता है, "
         "तो वह **{academic_priority}** पर वापस आ जाएगा, जिसमें प्रभावी शैक्षणिक स्कोर {effective_score:.2f} होगा।"
     ),
     "km_rule_warning": (
@@ -710,18 +710,18 @@ if submitted:
     else:
         jee_basis = (jee_score >= 20.0 and qual_exam == "12th Board")
 
-        # Assign Priorities cleanly (USING NEW STRING LABELS AND MERGING 12TH/DIPLOMA)
+        # Assign Priorities cleanly with specific 12th/Diploma distinct display text!
         if jee_basis:
-            academic_priority = "Priority (JEE Mains)"
+            academic_priority = "Priority: JEE Mains"
             base_score = jee_score
         elif qual_exam == "12th Board":
-            academic_priority = "Priority (12th / Diploma)"
+            academic_priority = "Priority: 12th Board"
             base_score = entered_perc
         elif qual_exam == "Diploma":
-            academic_priority = "Priority (12th / Diploma)"
+            academic_priority = "Priority: Diploma"
             base_score = entered_perc
         elif qual_exam == "D.Voc":
-            academic_priority = "Priority (D.Voc)"
+            academic_priority = "Priority: D.Voc"
             base_score = entered_perc
 
         # Automated Sports Weightage & Priority A Logic
@@ -748,7 +748,7 @@ if submitted:
             effective_score += sports_weight
             sports_bonus_applied = True
 
-        display_priority = "Priority (Sports A)" if is_category_a else academic_priority
+        display_priority = "Priority: Sports A" if is_category_a else academic_priority
 
         # --- DASHBOARD LAYOUT WITH SPEEDOMETER ---
         dash_col1, dash_col2 = st.columns([1.5, 1])
@@ -773,14 +773,14 @@ if submitted:
             elif domicile != "Rajasthan" and not wp_quota and not fn_quota:
                 st.warning(T["out_of_state_warning"])
 
-            # NEW PRIORITY RULES EXPANDER AND PDF DOWNLOAD
+            # NEW PRIORITY RULES EXPANDER AND PDF DOWNLOAD (Explains 12th/Diploma equivalence clearly)
             with st.expander("📄 View Official Priority Rules / आधिकारिक प्राथमिकता नियम देखें", expanded=False):
                 st.markdown("""
                 **Official Priority Sequence for REAP-2026 Admissions:**
-                * **Priority (Sports A):** Candidates under Sports Quota Category A.
-                * **Priority (JEE Mains):** Rank obtained in JEE (Mains) 2026 (Min 20 percentile).
-                * **Priority (12th / Diploma):** Percentile obtained in Class 12th OR Percentage obtained in Diploma.
-                * **Priority (D.Voc):** Percentage obtained in D.Voc.
+                * **Priority: Sports A:** Candidates under Sports Quota Category A.
+                * **Priority: JEE Mains:** Rank obtained in JEE (Mains) 2026 (Min 20 percentile).
+                * **Priority: 12th Board / Priority: Diploma:** Percentile obtained in Class 12th OR Percentage obtained in Diploma (Both are evaluated at the exact same tier).
+                * **Priority: D.Voc:** Percentage obtained in D.Voc.
                 """)
                 if os.path.exists("Priority_Rules.pdf"):
                     with open("Priority_Rules.pdf", "rb") as pdf_file:
@@ -833,7 +833,7 @@ if submitted:
 
                     if sports_quota and sports_cat != "None":
                         if cat_letter == "A":
-                            ranks.append(f"🔹 `msqa` (Priority (Sports A) - Max 5% capacity, then falls back to Sports Category B)")
+                            ranks.append(f"🔹 `msqa` (Priority: Sports A - Max 5% capacity, then falls back to Sports Category B)")
                         else:
                             ranks.append(f"🔹 `msqa` (Sports Priority Sort - Category {cat_letter})")
                 else:

@@ -68,9 +68,9 @@ T = {
         "जेईई (मेन्स) 2026 में प्राप्त रैंक। प्राथमिकता (JEE Mains) के तहत मूल्यांकन। न्यूनतम 20 पर्सेंटाइल आवश्यक (डिप्लोमा/D.Voc के लिए लागू नहीं)।"
     ),
     "diploma_success": (
-        "✅ **Note:** As a Diploma holder, you are considered equivalent to PCM. You are eligible for **Group-1 (All Branches)** and evaluated under **Priority (Diploma)**."
+        "✅ **Note:** As a Diploma holder, you are considered equivalent to PCM. You are eligible for **Group-1 (All Branches)** and evaluated under **Priority (12th / Diploma)**."
     ) if not is_hindi else (
-        "✅ **नोट:** डिप्लोमा धारक के रूप में, आपको PCM के समकक्ष माना जाता है। आप **ग्रुप-1 (सभी शाखाओं)** के लिए पात्र हैं और **प्राथमिकता (Diploma)** के तहत मूल्यांकन किया जाएगा।"
+        "✅ **नोट:** डिप्लोमा धारक के रूप में, आपको PCM के समकक्ष माना जाता है। आप **ग्रुप-1 (सभी शाखाओं)** के लिए पात्र हैं और **प्राथमिकता (12th / Diploma)** के तहत मूल्यांकन किया जाएगा।"
     ),
     "diploma_pct": "Diploma (%)" if not is_hindi else "डिप्लोमा (%)",
     "dvoc_info": (
@@ -710,15 +710,15 @@ if submitted:
     else:
         jee_basis = (jee_score >= 20.0 and qual_exam == "12th Board")
 
-        # Assign Priorities cleanly (USING NEW STRING LABELS)
+        # Assign Priorities cleanly (USING NEW STRING LABELS AND MERGING 12TH/DIPLOMA)
         if jee_basis:
             academic_priority = "Priority (JEE Mains)"
             base_score = jee_score
         elif qual_exam == "12th Board":
-            academic_priority = "Priority (12th Board)"
+            academic_priority = "Priority (12th / Diploma)"
             base_score = entered_perc
         elif qual_exam == "Diploma":
-            academic_priority = "Priority (Diploma)"
+            academic_priority = "Priority (12th / Diploma)"
             base_score = entered_perc
         elif qual_exam == "D.Voc":
             academic_priority = "Priority (D.Voc)"
@@ -779,8 +779,7 @@ if submitted:
                 **Official Priority Sequence for REAP-2026 Admissions:**
                 * **Priority (Sports A):** Candidates under Sports Quota Category A.
                 * **Priority (JEE Mains):** Rank obtained in JEE (Mains) 2026 (Min 20 percentile).
-                * **Priority (12th Board):** Percentile obtained in Class 12th.
-                * **Priority (Diploma):** Percentage obtained in Diploma.
+                * **Priority (12th / Diploma):** Percentile obtained in Class 12th OR Percentage obtained in Diploma.
                 * **Priority (D.Voc):** Percentage obtained in D.Voc.
                 """)
                 if os.path.exists("Priority_Rules.pdf"):

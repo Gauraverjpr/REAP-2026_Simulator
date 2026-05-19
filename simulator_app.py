@@ -336,6 +336,17 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
+# Custom Dashboard Card Component (Beautiful Shadow Boxes for Metrics - MATCHING REAP THEME)
+def custom_metric(label, value, delta=None):
+    delta_html = f"<div style='color: #4B5563; font-size: 1.05rem; margin-top: 8px; font-weight: 500;'>{delta}</div>" if delta else ""
+    return f"""
+    <div style="background-color: #FFFFFF; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border-top: 5px solid #D4AF37; margin-bottom: 15px; border-left: 1px solid #E5E7EB; border-right: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB;">
+        <div style="font-size: 1.1rem; color: #6B7280; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">{label}</div>
+        <div style="font-size: 2.2rem; color: #0A192F; font-weight: 700; line-height: 1.2; word-wrap: break-word; white-space: pre-wrap;">{value}</div>
+        {delta_html}
+    </div>
+    """
+
 st.warning(f"**{T['disclaimer_title']}** {T['disclaimer_text']}")
 
 
@@ -750,20 +761,17 @@ if submitted:
 
         display_priority = "Priority: Sports A" if is_category_a else academic_priority
 
-        # --- DASHBOARD LAYOUT WITH SPEEDOMETER ---
+        # --- DASHBOARD LAYOUT WITH SPEEDOMETER & CUSTOM HTML CARDS ---
         dash_col1, dash_col2 = st.columns([1.5, 1])
 
         with dash_col1:
-            mc1, mc2 = st.columns(2)
-            mc1.metric(
-                label=T["priority_metric"], value=display_priority,
-                delta=T["highest_eligible_delta"] if jee_basis else None
-            )
-
-            mc2.metric(
-                label=T["matrix_metric"], value=backend_category,
-                delta=T["outofstate_delta"] if (dom_override_applied and not wp_quota and not fn_quota) else None, delta_color="off"
-            )
+            c_m1, c_m2 = st.columns(2)
+            with c_m1:
+                delta_prio = T["highest_eligible_delta"] if jee_basis else None
+                st.markdown(custom_metric(T["priority_metric"], display_priority, delta_prio), unsafe_allow_html=True)
+            with c_m2:
+                delta_mat = T["outofstate_delta"] if (dom_override_applied and not wp_quota and not fn_quota) else None
+                st.markdown(custom_metric(T["matrix_metric"], backend_category, delta_mat), unsafe_allow_html=True)
 
             if is_category_a:
                 st.info(T["sports_fallback_msg"].format(academic_priority=academic_priority, effective_score=effective_score))
@@ -773,7 +781,7 @@ if submitted:
             elif domicile != "Rajasthan" and not wp_quota and not fn_quota:
                 st.warning(T["out_of_state_warning"])
 
-            # NEW PRIORITY RULES EXPANDER AND PDF DOWNLOAD (Explains 12th/Diploma equivalence clearly)
+            # NEW PRIORITY RULES EXPANDER AND PDF DOWNLOAD
             with st.expander("📄 View Official Priority Rules / आधिकारिक प्राथमिकता नियम देखें", expanded=False):
                 st.markdown("""
                 **Official Priority Sequence for REAP-2026 Admissions:**

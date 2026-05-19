@@ -31,6 +31,7 @@ is_hindi = (selected_language == "हिन्दी (Hindi)")
 # Hardcoded Theme Variables for Light Mode Default
 theme_axis_color = "#31333F"
 chart_theme = None
+gold_accent = "#D4AF37"
 
 
 # --- 2. TRANSLATION DICTIONARY (BILINGUAL ENGINE) ---
@@ -150,7 +151,7 @@ T = {
         "⚠️ **आउट-ऑफ-स्टेट नियम लागू:** अभ्यर्थी राजस्थान का मूल निवासी नहीं है। ऊर्ध्वाधर/क्षैतिज आरक्षण निरस्त कर दिए गए हैं, "
         "और अभ्यर्थी को **मुख्य राज्य योग्यता सूची (`mmerit`) से बाहर** कर दिया गया है। केवल **स्व-वित्तपोषित सीटों (SFS)** के लिए पात्र।"
     ),
-    "projected_lists_title": "🏆 Projected Ranking Lists" if not is_hindi else "🏆 अनुमानित रैंकिंग सूचियां (Projected Ranking Lists)",
+    "projected_lists_title": "🏆 Projected Ranking Lists" if not is_hindi else "🏆 अनुमानित रैंकिंग सूचियां",
     "wp_exclusive_error": (
         "🛑 **WORKING PROFESSIONAL EXCLUSIVE POOL**\n\nCandidate is removed from the main admission pool and placed "
         "exclusively in the Working Professionals list (`mwp`). No other state or horizontal reservations apply."
@@ -285,7 +286,7 @@ else:
     select_placeholder = "-- Select --"
 
 
-# --- 4. OFFICIAL LOGO & HEADER STYLING ---
+# --- 4. OFFICIAL LOGO & THEMED HEADER STYLING ---
 def get_base64_of_bin_file(bin_file):
     if os.path.exists(bin_file):
         with open(bin_file, 'rb') as f:
@@ -302,7 +303,7 @@ st.markdown(f"""
         background: linear-gradient(135deg, #FFFFFF 0%, #F3F4F6 100%);
         padding: 20px 30px;
         border-radius: 12px;
-        border-bottom: 4px solid #D4AF37; 
+        border-bottom: 4px solid {gold_accent}; 
         border-top: 1px solid #E5E7EB;
         border-left: 1px solid #E5E7EB;
         border-right: 1px solid #E5E7EB;
@@ -315,17 +316,24 @@ st.markdown(f"""
     .header-text {{ display: flex; flex-direction: column; justify-content: center; }}
     .header-text h1 {{ font-family: 'Georgia', serif; font-weight: 800; margin: 0; margin-bottom: 5px; font-size: 2.6rem; color: #0A192F !important; line-height: 1.1; }}
     .header-text p {{ margin: 0; font-size: 1.1rem; letter-spacing: 1px; color: #4B5563 !important; font-weight: 600; }}
-    .highlight {{ color: #D4AF37 !important; }}
+    .highlight {{ color: {gold_accent} !important; }}
     .header-logo {{ 
         height: 100px; 
         width: 100px;
         border-radius: 50%; 
         object-fit: contain;
     }}
-    .stButton > button[kind="secondary"]:hover {{
-        border-color: #EF4444 !important; 
-        color: #EF4444 !important; 
-    }}
+    
+    /* Gold Accents & Highlights */
+    div[data-baseweb="select"] > div:hover {{ border-color: {gold_accent} !important; }}
+    .stTextInput input:focus, .stNumberInput input:focus, .stDateInput input:focus {{ border-color: {gold_accent} !important; box-shadow: 0 0 0 1px {gold_accent} !important; }}
+    div[data-baseweb="checkbox"] input:checked + div {{ background-color: {gold_accent} !important; border-color: {gold_accent} !important; }}
+    div[data-testid="stExpander"] {{ border-left: 4px solid {gold_accent} !important; }}
+
+    /* Red Action Button */
+    .stButton > button {{ background-color: #EF4444 !important; color: #FFFFFF !important; border: none !important; transition: 0.2s; }}
+    .stButton > button:hover {{ background-color: #DC2626 !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2); }}
+
 </style>
 <div class="official-header">
     <div class="header-text">
@@ -336,11 +344,11 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# Custom Dashboard Card Component (Beautiful Shadow Boxes for Metrics - MATCHING REAP THEME)
+# Custom Dashboard Card Component
 def custom_metric(label, value, delta=None):
     delta_html = f"<div style='color: #4B5563; font-size: 1.05rem; margin-top: 8px; font-weight: 500;'>{delta}</div>" if delta else ""
     return f"""
-    <div style="background-color: #FFFFFF; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border-top: 5px solid #D4AF37; margin-bottom: 15px; border-left: 1px solid #E5E7EB; border-right: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB;">
+    <div style="background-color: #FFFFFF; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border-top: 5px solid {gold_accent}; margin-bottom: 15px; border: 1px solid #E5E7EB;">
         <div style="font-size: 1.1rem; color: #6B7280; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">{label}</div>
         <div style="font-size: 2.2rem; color: #0A192F; font-weight: 700; line-height: 1.2; word-wrap: break-word; white-space: pre-wrap;">{value}</div>
         {delta_html}
@@ -362,6 +370,10 @@ def generate_pdf_report(data):
     dark_gray = (55, 65, 81)
     light_gray = (243, 244, 246)
     
+    def clean_pdf_text(t):
+        raw = str(t).replace('✅', '').replace('🔹', '').replace('🛑', '').replace('⚠️', '').replace('✨', '').strip()
+        return raw.encode('latin-1', 'replace').decode('latin-1')
+
     # Header Banner
     pdf.set_fill_color(*navy)
     pdf.rect(0, 0, 210, 42, 'F')
@@ -386,123 +398,120 @@ def generate_pdf_report(data):
     pdf.line(10, pdf.get_y(), 200, pdf.get_y())
     pdf.ln(5)
     
-    # Candidate details layout grid (using precise widths)
+    # Candidate details layout grid (10% increased font sizes)
     pdf.set_text_color(*dark_gray)
-    pdf.set_font('Helvetica', 'B', 11)
+    pdf.set_font('Helvetica', 'B', 12)
     pdf.cell(95, 7, 'CANDIDATE PROFILE', ln=False)
     pdf.cell(95, 7, 'ACADEMIC CREDENTIALS', ln=True)
-    pdf.set_font('Helvetica', '', 10)
     
     # Row 1
+    pdf.set_font('Helvetica', '', 11)
     pdf.cell(40, 6, 'Name:', ln=False)
-    pdf.set_font('Helvetica', 'B', 10)
-    pdf.cell(55, 6, str(data.get('name', 'Anonymous')), ln=False)
-    pdf.set_font('Helvetica', '', 10)
+    pdf.set_font('Helvetica', 'B', 11)
+    pdf.cell(55, 6, clean_pdf_text(data.get('name', 'Anonymous')), ln=False)
+    pdf.set_font('Helvetica', '', 11)
     pdf.cell(45, 6, 'Qualifying Exam:', ln=False)
-    pdf.set_font('Helvetica', 'B', 10)
-    pdf.cell(50, 6, str(data.get('qual_exam', 'N/A')), ln=True)
+    pdf.set_font('Helvetica', 'B', 11)
+    pdf.cell(50, 6, clean_pdf_text(data.get('qual_exam', 'N/A')), ln=True)
     
     # Row 2
-    pdf.set_font('Helvetica', '', 10)
+    pdf.set_font('Helvetica', '', 11)
     pdf.cell(40, 6, 'Date of Birth:', ln=False)
-    pdf.set_font('Helvetica', 'B', 10)
+    pdf.set_font('Helvetica', 'B', 11)
     pdf.cell(55, 6, str(data.get('dob', 'N/A')), ln=False)
-    pdf.set_font('Helvetica', '', 10)
-    pdf.cell(45, 6, 'Qualifying Percentage:', ln=False)
-    pdf.set_font('Helvetica', 'B', 10)
+    pdf.set_font('Helvetica', '', 11)
+    pdf.cell(45, 6, 'Qual. Percentage:', ln=False)
+    pdf.set_font('Helvetica', 'B', 11)
     pdf.cell(50, 6, f"{data.get('entered_perc', 0.0):.2f}%", ln=True)
     
     # Row 3
-    pdf.set_font('Helvetica', '', 10)
+    pdf.set_font('Helvetica', '', 11)
     pdf.cell(40, 6, 'Domicile State:', ln=False)
-    pdf.set_font('Helvetica', 'B', 10)
-    pdf.cell(55, 6, str(data.get('domicile', 'N/A')), ln=False)
-    pdf.set_font('Helvetica', '', 10)
-    pdf.cell(45, 6, 'JEE Mains Percentile:', ln=False)
-    pdf.set_font('Helvetica', 'B', 10)
+    pdf.set_font('Helvetica', 'B', 11)
+    pdf.cell(55, 6, clean_pdf_text(data.get('domicile', 'N/A')), ln=False)
+    pdf.set_font('Helvetica', '', 11)
+    pdf.cell(45, 6, 'JEE Mains %ile:', ln=False)
+    pdf.set_font('Helvetica', 'B', 11)
     pdf.cell(50, 6, f"{data.get('jee_score', 0.0):.2f}", ln=True)
     
     # Row 4
-    pdf.set_font('Helvetica', '', 10)
+    pdf.set_font('Helvetica', '', 11)
     pdf.cell(40, 6, 'Category & Gender:', ln=False)
-    pdf.set_font('Helvetica', 'B', 10)
-    pdf.cell(55, 6, f"{data.get('category')} ({data.get('gender')})", ln=False)
-    pdf.set_font('Helvetica', '', 10)
+    pdf.set_font('Helvetica', 'B', 11)
+    pdf.cell(55, 6, f"{clean_pdf_text(data.get('category'))} ({clean_pdf_text(data.get('gender'))})", ln=False)
+    pdf.set_font('Helvetica', '', 11)
     pdf.cell(45, 6, '10th Board Marks:', ln=False)
-    pdf.set_font('Helvetica', 'B', 10)
+    pdf.set_font('Helvetica', 'B', 11)
     pdf.cell(50, 6, f"{data.get('perc_10th', 0.0):.2f}%", ln=True)
     
     pdf.ln(8)
     
     # Results Box Container
+    box_start_y = pdf.get_y()
     pdf.set_fill_color(*light_gray)
-    pdf.rect(10, pdf.get_y(), 190, 48, 'F')
-    pdf.set_y(pdf.get_y() + 3)
+    pdf.rect(10, box_start_y, 190, 42, 'F')
+    pdf.set_y(box_start_y + 3)
     
-    pdf.set_font('Helvetica', 'B', 12)
+    pdf.set_font('Helvetica', 'B', 13)
     pdf.set_text_color(*navy)
     pdf.cell(0, 7, '   SIMULATION EVALUATION RESULTS', ln=True)
     
-    pdf.set_font('Helvetica', '', 10)
+    pdf.set_font('Helvetica', '', 11)
     pdf.set_text_color(*dark_gray)
     
     pdf.cell(60, 6, '     Calculated Priority Tier:', ln=False)
-    pdf.set_font('Helvetica', 'B', 10)
-    pdf.cell(130, 6, str(data.get('display_priority', 'N/A')), ln=True)
+    pdf.set_font('Helvetica', 'B', 11)
+    pdf.cell(130, 6, clean_pdf_text(data.get('display_priority', 'N/A')), ln=True)
     
-    pdf.set_font('Helvetica', '', 10)
+    pdf.set_font('Helvetica', '', 11)
     pdf.cell(60, 6, '     Final Seat Matrix Category:', ln=False)
-    pdf.set_font('Helvetica', 'B', 10)
-    pdf.cell(130, 6, str(data.get('backend_category', 'N/A')), ln=True)
+    pdf.set_font('Helvetica', 'B', 11)
+    pdf.cell(130, 6, clean_pdf_text(data.get('backend_category', 'N/A')), ln=True)
     
-    pdf.set_font('Helvetica', '', 10)
+    pdf.set_font('Helvetica', '', 11)
     pdf.cell(60, 6, '     Effective Academic Score:', ln=False)
-    pdf.set_font('Helvetica', 'B', 10)
+    pdf.set_font('Helvetica', 'B', 11)
     pdf.cell(130, 6, f"{data.get('effective_score', 0.0):.2f}", ln=True)
 
-    pdf.set_font('Helvetica', '', 10)
+    pdf.set_font('Helvetica', '', 11)
     pdf.cell(60, 6, '     Eligible AICTE Group(s):', ln=False)
-    pdf.set_font('Helvetica', 'B', 10)
-    pdf.cell(130, 6, ', '.join(data.get('eligible_groups', ['N/A'])), ln=True)
+    pdf.set_font('Helvetica', 'B', 11)
+    pdf.cell(130, 6, clean_pdf_text(', '.join(data.get('eligible_groups', ['N/A']))), ln=True)
     
-    pdf.set_y(pdf.get_y() + 10)
+    # Move cursor safely below box
+    pdf.set_y(box_start_y + 48)
     
     # Ranks Section
     pdf.set_text_color(*navy)
-    pdf.set_font('Helvetica', 'B', 13)
+    pdf.set_font('Helvetica', 'B', 14)
     pdf.cell(0, 8, 'PROJECTED TARGET RANKING COHORTS', ln=True)
     pdf.set_draw_color(*gold)
     pdf.set_line_width(0.4)
     pdf.line(10, pdf.get_y(), 200, pdf.get_y())
     pdf.ln(4)
     
-    pdf.set_font('Helvetica', '', 10)
+    pdf.set_font('Helvetica', '', 11)
     pdf.set_text_color(*dark_gray)
     pdf.multi_cell(0, 5, 'Based on the entered credentials, the candidate is dynamic assigned eligibility to compete in the following ranking lists (pools):', ln=True)
     pdf.ln(2)
     
-    pdf.set_font('Helvetica', 'B', 10)
+    pdf.set_font('Helvetica', 'B', 11)
     for rank in data.get('ranks', []):
-        clean_rank = rank.replace('🔹 ', '').strip()
+        clean_rank = clean_pdf_text(rank)
         pdf.cell(10, 6, '  -', ln=False)
         pdf.cell(0, 6, clean_rank, ln=True)
         
-    pdf.ln(8)
+    pdf.ln(6)
     
-    # Warning Legal Disclaimer Frame
-    pdf.set_fill_color(254, 243, 199) # soft amber box
-    pdf.rect(10, pdf.get_y(), 190, 32, 'F')
-    pdf.set_y(pdf.get_y() + 2)
-    pdf.set_font('Helvetica', 'B', 8)
-    pdf.set_text_color(180, 83, 9) # amber title text
-    pdf.cell(0, 4, '    OFFICIAL REAP-2026 SYSTEM DISCLAIMER:', ln=True)
-    pdf.set_font('Helvetica', '', 7.5)
-    pdf.multi_cell(180, 3.5, (
-        "    This Eligibility Simulator is provided for informational and guidance purposes only. The projected priority tiers,\n"
-        "    effective scores, and ranking lists generated by this tool are tentative and based entirely on the unverified data entered\n"
-        "    by the user. The final, official merit list and ranks will be generated by the Centre for Electronic Governance during\n"
-        "    the actual REAP-2026 Centralized Admission Process after thorough verification of original documents."
-    ), align='L')
+    # Warning Legal Disclaimer Frame (Dynamic Auto-Wrap Width)
+    pdf.set_fill_color(254, 243, 199) 
+    pdf.set_text_color(180, 83, 9) 
+    pdf.set_font('Helvetica', 'B', 8.5)
+    pdf.cell(0, 6, '  OFFICIAL REAP-2026 SYSTEM DISCLAIMER:', ln=True, fill=True)
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font('Helvetica', '', 8)
+    disclaimer_text = "  This Eligibility Simulator is provided for informational and guidance purposes only. The projected priority tiers, effective scores, and ranking lists generated by this tool are tentative and based entirely on the unverified data entered by the candidate. The final, official merit list and ranks will be generated by the Centre for Electronic Governance (CEG) during the actual REAP-2026 Centralized Admission Process after thorough verification of original documents.  "
+    pdf.multi_cell(0, 4, disclaimer_text, align='L', fill=True)
     
     return bytes(pdf.output())
 

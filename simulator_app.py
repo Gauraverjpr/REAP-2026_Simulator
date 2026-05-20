@@ -918,7 +918,7 @@ if submitted:
                 value=effective_score,
                 domain={'x': [0, 1], 'y': [0, 1]},
                 title={'text': gauge_full_title, 'font': {'size': 22, 'color': theme_axis_color}},
-                number={'font': {'color': theme_axis_color}, 'valueformat': '.2f'},,
+                number={'font': {'color': theme_axis_color}, 'valueformat': '.2f'},
                 delta={'reference': base_score, 'increasing': {'color': "#10B981"}, 'position': "top"},
                 gauge={
                     'axis': {'range': [None, 120], 'tickwidth': 1, 'tickcolor': theme_axis_color, 'tickfont': {'color': theme_axis_color}},

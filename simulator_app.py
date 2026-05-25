@@ -288,59 +288,59 @@ else:
 
 # --- 4. OFFICIAL LOGO & HEADER STYLING ---
 def get_base64_of_bin_file(bin_file):
-    if os.path.exists(bin_file):
-        with open(bin_file, 'rb') as f:
-            data = f.read()
-        return base64.b64encode(data).decode()
-    return ""
+    if os.path.exists(bin_file):
+        with open(bin_file, 'rb') as f:
+            data = f.read()
+        return base64.b64encode(data).decode()
+    return ""
 
 logo_base64 = get_base64_of_bin_file("CEGLogo.png")
 logo_html = f'<img src="data:image/png;base64,{logo_base64}" class="header-logo">' if logo_base64 else ''
 
 st.markdown(f"""
 <style>
-    .official-header {{
-        background: linear-gradient(135deg, #FFFFFF 0%, #F3F4F6 100%);
-        padding: 20px 30px;
-        border-radius: 12px;
-        border-bottom: 4px solid {gold_accent}; 
-        border-top: 1px solid #E5E7EB;
-        border-left: 1px solid #E5E7EB;
-        border-right: 1px solid #E5E7EB;
-        display: flex;
-        align-items: center; 
-        justify-content: space-between; 
-        margin-bottom: 20px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }}
-    .header-text {{ display: flex; flex-direction: column; justify-content: center; }}
-    .header-text h1 {{ font-family: 'Georgia', serif; font-weight: 800; margin: 0; margin-bottom: 5px; font-size: 2.6rem; color: #0A192F !important; line-height: 1.1; }}
-    .header-text p {{ margin: 0; font-size: 1.1rem; letter-spacing: 1px; color: #4B5563 !important; font-weight: 600; }}
-    .highlight {{ color: {gold_accent} !important; }}
-    .header-logo {{ 
-        height: 100px; 
-        width: 100px;
-        border-radius: 50%; 
-        object-fit: contain;
-    }}
-    
-    /* Gold Accents & Highlights */
-    div[data-baseweb="select"] > div:hover {{ border-color: {gold_accent} !important; }}
-    .stTextInput input:focus, .stNumberInput input:focus, .stDateInput input:focus {{ border-color: {gold_accent} !important; box-shadow: 0 0 0 1px {gold_accent} !important; }}
-    div[data-baseweb="checkbox"] input:checked + div {{ background-color: {gold_accent} !important; border-color: {gold_accent} !important; }}
-    div[data-testid="stExpander"] {{ border-left: 4px solid {gold_accent} !important; }}
+    .official-header {{
+        background: linear-gradient(135deg, #FFFFFF 0%, #F3F4F6 100%);
+        padding: 20px 30px;
+        border-radius: 12px;
+        border-bottom: 4px solid {gold_accent}; 
+        border-top: 1px solid #E5E7EB;
+        border-left: 1px solid #E5E7EB;
+        border-right: 1px solid #E5E7EB;
+        display: flex;
+        align-items: center; 
+        justify-content: space-between; 
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }}
+    .header-text {{ display: flex; flex-direction: column; justify-content: center; }}
+    .header-text h1 {{ font-family: 'Georgia', serif; font-weight: 800; margin: 0; margin-bottom: 5px; font-size: 2.6rem; color: #0A192F !important; line-height: 1.1; }}
+    .header-text p {{ margin: 0; font-size: 1.1rem; letter-spacing: 1px; color: #4B5563 !important; font-weight: 600; }}
+    .highlight {{ color: {gold_accent} !important; }}
+    .header-logo {{ 
+        height: 100px; 
+        width: 100px;
+        border-radius: 50%; 
+        object-fit: contain;
+    }}
+    
+    /* Gold Accents & Highlights */
+    div[data-baseweb="select"] > div:hover {{ border-color: {gold_accent} !important; }}
+    .stTextInput input:focus, .stNumberInput input:focus, .stDateInput input:focus {{ border-color: {gold_accent} !important; box-shadow: 0 0 0 1px {gold_accent} !important; }}
+    div[data-baseweb="checkbox"] input:checked + div {{ background-color: {gold_accent} !important; border-color: {gold_accent} !important; }}
+    div[data-testid="stExpander"] {{ border-left: 4px solid {gold_accent} !important; }}
 
-    /* Red Action Button */
-    .stButton > button {{ background-color: #EF4444 !important; color: #FFFFFF !important; border: none !important; transition: 0.2s; }}
-    .stButton > button:hover {{ background-color: #DC2626 !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2); }}
+    /* Red Action Button */
+    .stButton > button {{ background-color: #EF4444 !important; color: #FFFFFF !important; border: none !important; transition: 0.2s; }}
+    .stButton > button:hover {{ background-color: #DC2626 !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2); }}
 
 </style>
 <div class="official-header">
-    <div class="header-text">
-        <h1>{T["app_title"]} <span class="highlight">2026</span></h1>
-        <p>{T["app_subtitle"]}</p>
-    </div>
-    {logo_html}
+    <div class="header-text">
+        <h1>{T["app_title"]} <span class="highlight">2026</span></h1>
+        <p>{T["app_subtitle"]}</p>
+    </div>
+    {logo_html}
 </div>
 """, unsafe_allow_html=True)
 

@@ -286,19 +286,13 @@ else:
     select_placeholder = "-- Select --"
 
 
-# --- 4. OFFICIAL LOGO & HEADER STYLING ---
-def get_base64_of_bin_file(bin_file):
-    if os.path.exists(bin_file):
-        with open(bin_file, 'rb') as f:
-            data = f.read()
-        return base64.b64encode(data).decode()
-    return ""
-
-logo_base64 = get_base64_of_bin_file("CEGLogo.png")
-logo_html = f'<img src="data:image/png;base64,{logo_base64}" class="header-logo">' if logo_base64 else ''
-
 st.markdown(f"""
 <style>
+    /* Hides Streamlit branding and profile elements */
+    #MainMenu {{visibility: hidden;}}
+    footer {{visibility: hidden;}}
+    .stAppDeployButton {{display: none;}}
+
     .official-header {{
         background: linear-gradient(135deg, #FFFFFF 0%, #F3F4F6 100%);
         padding: 20px 30px;
@@ -335,13 +329,6 @@ st.markdown(f"""
     .stButton > button:hover {{ background-color: #DC2626 !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2); }}
 
 </style>
-<div class="official-header">
-    <div class="header-text">
-        <h1>{T["app_title"]} <span class="highlight">2026</span></h1>
-        <p>{T["app_subtitle"]}</p>
-    </div>
-    {logo_html}
-</div>
 """, unsafe_allow_html=True)
 
 # Custom Dashboard Card Component (Beautiful Shadow Boxes for Metrics - MATCHING REAP THEME)

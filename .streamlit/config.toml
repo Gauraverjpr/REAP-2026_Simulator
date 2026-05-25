@@ -1,4 +1,13 @@
 [theme]
+# Locks the app into Light Mode with the REAP Gold accent
 base = "light"
 primaryColor = "#D4AF37"
 font = "sans serif"
+
+[client]
+# Hides the developer menu from the candidates
+toolbarMode = "viewer"
+
+[server]
+# Safe background execution for IIS/.NET servers
+headless = true

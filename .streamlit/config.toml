@@ -11,3 +11,7 @@ toolbarMode = "viewer"
 [server]
 # Safe background execution for IIS/.NET servers
 headless = true
+
+[ui]
+# This hides the GitHub/Fork icon from the top right
+hideTopBar = true
